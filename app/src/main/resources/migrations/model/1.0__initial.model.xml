@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <createTable name="treasure_chests" identityType="external" pkName="pk_treasure_chests">
+            <column name="id" type="uuid" primaryKey="true" identity="true"/>
+            <column name="location" type="varchar"/>
+        </createTable>
+        <createTable name="treasure_chest_inventories" identityType="external" pkName="pk_treasure_chest_inventories">
+            <column name="id" type="uuid" primaryKey="true" identity="true"/>
+            <column name="player_id" type="uuid"/>
+            <column name="chest_id" type="uuid" references="treasure_chests.id" foreignKeyName="fk_treasure_chest_inventories_chest_id" foreignKeyIndex="ix_treasure_chest_inventories_chest_id" foreignKeyOnDelete="CASCADE" foreignKeyOnUpdate="RESTRICT"/>
+            <column name="time" type="timestamp"/>
+            <column name="inventory" type="varchar"/>
+        </createTable>
+        <createTable name="treasure_loot" identityType="external" pkName="pk_treasure_loot">
+            <column name="id" type="uuid" primaryKey="true" identity="true"/>
+            <column name="chest_id" type="uuid" references="treasure_chests.id" foreignKeyName="fk_treasure_loot_chest_id" foreignKeyIndex="ix_treasure_loot_chest_id" foreignKeyOnDelete="CASCADE" foreignKeyOnUpdate="RESTRICT"/>
+            <column name="item" type="varchar"/>
+            <column name="chance" type="double" notnull="true"/>
+        </createTable>
+    </changeSet>
+</migration>

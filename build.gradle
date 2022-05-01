@@ -1,0 +1,32 @@
+plugins {
+    id 'java'
+}
+
+group 'com.gufli.treasurechests'
+version '1.0-SNAPSHOT'
+
+compileJava {
+    sourceCompatibility = 1.17
+    targetCompatibility = 1.17
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.17
+    targetCompatibility = 1.17
+
+    group = parent.group;
+    version = parent.version;
+
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenCentral()
+
+        maven { url 'https://repo.jorisg.com/snapshots' }
+        maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    }
+}
