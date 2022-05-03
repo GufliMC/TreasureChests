@@ -21,14 +21,10 @@ public class BTreasureChest extends BModel {
     @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest", fetch = FetchType.EAGER)
     private List<BTreasureLoot> loot;
 
-    private boolean global;
+    private int respawnTime = 60;
 
-    private int respawnMinutes;
-
-    public BTreasureChest(Location location, boolean global, int respawnMinutes) {
+    public BTreasureChest(Location location) {
         this.location = location;
-        this.global = global;
-        this.respawnMinutes = respawnMinutes;
     }
 
     // getters
@@ -40,6 +36,16 @@ public class BTreasureChest extends BModel {
     public Location location() {
         return location;
     }
+
+    public int respawnTime() {
+        return respawnTime;
+    }
+
+    public void setRespawnTime(int respawnTime) {
+        this.respawnTime = respawnTime;
+    }
+
+    // loot
 
     public List<BTreasureLoot> loot() {
         return loot;
@@ -53,14 +59,6 @@ public class BTreasureChest extends BModel {
 
     public void removeLoot(BTreasureLoot loot) {
         this.loot.remove(loot);
-    }
-
-    public int respawnMinutes() {
-        return respawnMinutes;
-    }
-
-    public boolean global() {
-        return global;
     }
 
     //

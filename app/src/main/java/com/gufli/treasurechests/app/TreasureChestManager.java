@@ -184,8 +184,8 @@ public class TreasureChestManager {
                 .findAny().orElse(null);
     }
 
-    public CompletableFuture<BTreasureChest> addChest(Location location, boolean global, int respawnMinutes) {
-        BTreasureChest chest = new BTreasureChest(location, global, respawnMinutes);
+    public CompletableFuture<BTreasureChest> addChest(Location location) {
+        BTreasureChest chest = new BTreasureChest(location);
         return databaseContext.saveAsync(chest).thenApply((v) -> {
             chests.add(chest);
             return chest;

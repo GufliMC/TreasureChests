@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import com.gufli.treasurechests.app.commands.RootCommand;
 import com.gufli.treasurechests.app.data.DatabaseContext;
 import com.gufli.treasurechests.app.listeners.PlayerChestListener;
+import com.gufli.treasurechests.app.listeners.PlayerChestSetupListener;
 import com.gufli.treasurechests.app.listeners.PlayerConnectionListener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -69,6 +70,7 @@ public class TreasureChests extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerConnectionListener(treasureChestManager), this);
         pm.registerEvents(new PlayerChestListener(treasureChestManager), this);
+        pm.registerEvents(new PlayerChestSetupListener(treasureChestManager), this);
 
         getLogger().info("Enabled " + nameAndVersion() + ".");
     }
