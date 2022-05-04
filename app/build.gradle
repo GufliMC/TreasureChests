@@ -34,8 +34,6 @@ dependencies {
 
     implementation 'org.minestombrick.ebean:api:1.0-SNAPSHOT'
     implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
-
     implementation 'com.guflimc.mastergui:bukkit:1.0-SNAPSHOT'
 
     implementation 'io.ebean:ebean:12.14.1'

@@ -2,6 +2,7 @@
 create table treasure_chests (
   id                            varchar(40) not null,
   location                      varchar(255),
+  respawn_time                  integer not null,
   constraint pk_treasure_chests primary key (id)
 );
 
@@ -10,15 +11,15 @@ create table treasure_chest_inventories (
   player_id                     varchar(40),
   chest_id                      varchar(40),
   time                          datetime(6),
-  inventory                     varchar(255),
+  inventory                     TEXT,
   constraint pk_treasure_chest_inventories primary key (id)
 );
 
 create table treasure_loot (
   id                            varchar(40) not null,
   chest_id                      varchar(40),
-  item                          varchar(255),
-  chance                        double not null,
+  item                          TEXT,
+  chance                        integer not null,
   constraint pk_treasure_loot primary key (id)
 );
 

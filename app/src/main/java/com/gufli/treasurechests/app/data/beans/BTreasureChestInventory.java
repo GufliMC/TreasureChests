@@ -18,13 +18,14 @@ public class BTreasureChestInventory extends BModel {
 
     private final UUID playerId;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = BTreasureChest.class)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
     private final BTreasureChest chest;
 
     private final Instant time;
 
     @Convert(converter = InventoryConverter.class)
+    @Column(length = 65535, columnDefinition = "TEXT")
     private Inventory inventory;
 
     public BTreasureChestInventory(UUID playerId, BTreasureChest chest, Inventory inventory) {

@@ -13,9 +13,10 @@ public class InventoryConverter implements AttributeConverter<Inventory, String>
     @Override
     public String convertToDatabaseColumn(Inventory attribute) {
         YamlConfiguration config = new YamlConfiguration();
+        config.set("size", attribute.getSize());
         for ( int i = 0; i < attribute.getSize(); i++) {
             if ( attribute.getItem(i) == null ) continue;
-            config.set(i + "", attribute.getItem(i));
+            config.set("items." + i + "", attribute.getItem(i));
         }
         return config.saveToString();
     }
@@ -29,10 +30,10 @@ public class InventoryConverter implements AttributeConverter<Inventory, String>
             return null;
         }
 
-        int size = Math.max(9, (int) Math.ceil(config.getKeys(false).size() / 9.0) * 9);
+        int size = config.getInt("size");
 
         Inventory inv = Bukkit.createInventory(null, size);
-        for ( String key : config.getKeys(false) ) {
+        for ( String key : config.getConfigurationSection("items").getKeys(false) ) {
             inv.setItem(Integer.parseInt(key), config.getItemStack(key));
         }
         return inv;

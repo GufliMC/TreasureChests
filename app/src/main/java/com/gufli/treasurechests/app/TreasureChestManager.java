@@ -7,14 +7,17 @@ import com.gufli.treasurechests.app.data.beans.BTreasureChestInventory;
 import com.gufli.treasurechests.app.data.beans.BTreasureLoot;
 import com.gufli.treasurechests.app.data.beans.query.QBTreasureChest;
 import com.gufli.treasurechests.app.data.beans.query.QBTreasureChestInventory;
-import com.gufli.treasurechests.app.session.PlayerSession;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,15 +27,15 @@ import java.util.concurrent.CompletableFuture;
 public class TreasureChestManager {
 
     private final DatabaseContext databaseContext;
+    private final JavaPlugin plugin;
 
     private final Set<BTreasureChest> chests = new HashSet<>();
     private final Set<BTreasureChestInventory> inventories = new HashSet<>();
 
-    private final Map<Player, PlayerSession> sessions = new HashMap<>();
-
     private final Random random = new Random();
 
-    public TreasureChestManager(DatabaseContext databaseContext) {
+    public TreasureChestManager(JavaPlugin plugin, DatabaseContext databaseContext) {
+        this.plugin = plugin;
         this.databaseContext = databaseContext;
         reload();
     }
@@ -40,7 +43,6 @@ public class TreasureChestManager {
     void shutdown() {
         chests.clear();
         inventories.clear();
-        sessions.clear();
     }
 
     void reload() {
@@ -48,14 +50,6 @@ public class TreasureChestManager {
 
         // load chests
         chests.addAll(new QBTreasureChest().findSet());
-
-        // load inventories of global chest
-        chests.stream().filter(BTreasureChest::global)
-                .forEach(chest -> inventories.add(new QBTreasureChestInventory()
-                        .chest.eq(chest)
-                        .setMaxRows(1)
-                        .orderBy().time.desc()
-                        .findOne()));
 
         // load players
         Bukkit.getOnlinePlayers().forEach(this::load);
@@ -67,21 +61,13 @@ public class TreasureChestManager {
 
     public void unload(Player player) {
         inventories.removeIf(inv -> inv.playerId().equals(player.getUniqueId()));
-        sessions.remove(player);
     }
 
-    // session
-
-    public void setSession(Player player, PlayerSession session) {
-        sessions.put(player, session);
-    }
-
-    public void removeSession(Player player) {
-        sessions.remove(player);
-    }
-
-    public PlayerSession session(Player player) {
-        return sessions.get(player);
+    public void save(Player player, Inventory inventory) {
+        inventories.stream()
+                .filter(inv -> inv.playerId().equals(player.getUniqueId()))
+                .filter(inv -> inv.inventory().equals(inventory))
+                .findAny().ifPresent(this::save);
     }
 
     //
@@ -94,16 +80,17 @@ public class TreasureChestManager {
 
         BTreasureChestInventory tci = inventories.stream()
                 .filter(inv -> inv.chest().equals(chest))
-                .filter(inv -> chest.global() || inv.playerId().equals(player.getUniqueId()))
-                .filter(inv -> inv.time().isAfter(Instant.now().minus(chest.respawnMinutes(), ChronoUnit.MINUTES)))
+                .filter(inv -> inv.playerId().equals(player.getUniqueId()))
+                .filter(inv -> inv.time().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
                 .max(Comparator.comparing(BTreasureChestInventory::time))
                 .orElse(null);
 
+        // return inventory if it already exists
         if (tci != null) {
-            setSession(player, new PlayerSession(tci));
             return tci.inventory();
         }
 
+        // get items and randomize winning chances
         List<ItemStack> items = new ArrayList<>();
         for (BTreasureLoot loot : chest.loot()) {
             if (loot.chance() >= 1) {
@@ -113,7 +100,7 @@ public class TreasureChestManager {
 
             int amount = 0;
             for (int i = 0; i < loot.item().getAmount(); i++) {
-                if (random.nextDouble() < loot.chance()) {
+                if (random.nextInt(100) < loot.chance()) {
                     amount++;
                 }
             }
@@ -125,16 +112,28 @@ public class TreasureChestManager {
             }
         }
 
+        // get size of chest
         int size = 27;
         if (block.getState() instanceof DoubleChest) {
             size = 54;
         }
 
-        Inventory inv = Bukkit.createInventory(null, size, "Looterss");
-        for (int i = 0; i < items.size(); i++) {
-            inv.setItem(i, items.get(i));
+        Inventory inv = Bukkit.createInventory(null, size, ChatColor.DARK_PURPLE + "Treasure Chest");
+
+        Set<Integer> indexes = new HashSet<>();
+        for (ItemStack item : items) {
+            // generate random index in inventory
+            int index;
+            do {
+                index = random.nextInt(size);
+            } while (indexes.contains(index));
+            indexes.add(index);
+
+            // set item at index
+            inv.setItem(index, item);
         }
 
+        // save current inventory
         BTreasureChestInventory ntci = new BTreasureChestInventory(player.getUniqueId(), chest, inv);
         save(ntci).thenRun(() -> inventories.add(ntci));
 
@@ -151,6 +150,8 @@ public class TreasureChestManager {
         for (BModel m : models) {
             if (m instanceof BTreasureChest btc) {
                 chests.remove(btc);
+            } else if (m instanceof BTreasureLoot btl) {
+                btl.chest.removeLoot(btl);
             }
         }
 
@@ -164,10 +165,10 @@ public class TreasureChestManager {
     }
 
     public BTreasureChest chestAt(Block block) {
-        if (block.getState() instanceof DoubleChest dc) {
+        if (block.getState() instanceof Chest chest && chest.getInventory() instanceof DoubleChestInventory dci) {
             return chestAt(List.of(
-                    ((DoubleChest) dc.getLeftSide()).getLocation().getBlock(),
-                    ((DoubleChest) dc.getRightSide()).getLocation().getBlock()
+                    dci.getLeftSide().getLocation().getBlock(),
+                    dci.getRightSide().getLocation().getBlock()
             ));
         }
 
@@ -186,9 +187,11 @@ public class TreasureChestManager {
 
     public CompletableFuture<BTreasureChest> addChest(Location location) {
         BTreasureChest chest = new BTreasureChest(location);
-        return databaseContext.saveAsync(chest).thenApply((v) -> {
+        return databaseContext.saveAsync(chest).thenCompose((v) -> {
             chests.add(chest);
-            return chest;
+            CompletableFuture<BTreasureChest> cf = new CompletableFuture<>();
+            plugin.getServer().getScheduler().runTask(plugin, () -> cf.complete(chest));
+            return cf;
         });
     }
 

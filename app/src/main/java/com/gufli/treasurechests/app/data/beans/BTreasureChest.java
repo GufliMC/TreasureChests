@@ -1,6 +1,7 @@
 package com.gufli.treasurechests.app.data.beans;
 
 import com.gufli.treasurechests.app.data.converters.LocationConverter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,10 +19,10 @@ public class BTreasureChest extends BModel {
     @Convert(converter = LocationConverter.class)
     private final Location location;
 
-    @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest", fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest")
     private List<BTreasureLoot> loot;
 
-    private int respawnTime = 60;
+    private int respawnTime = 3600;
 
     public BTreasureChest(Location location) {
         this.location = location;
@@ -42,6 +43,7 @@ public class BTreasureChest extends BModel {
     }
 
     public void setRespawnTime(int respawnTime) {
+        respawnTime = Math.max(0, respawnTime);
         this.respawnTime = respawnTime;
     }
 
@@ -51,8 +53,8 @@ public class BTreasureChest extends BModel {
         return loot;
     }
 
-    public BTreasureLoot addLoot(ItemStack item, double chance) {
-        BTreasureLoot loot = new BTreasureLoot(this, item, chance);
+    public BTreasureLoot addLoot(ItemStack item) {
+        BTreasureLoot loot = new BTreasureLoot(this, item);
         this.loot.add(loot);
         return loot;
     }

@@ -2,6 +2,7 @@ package com.gufli.treasurechests.app.data.beans;
 
 import com.gufli.treasurechests.app.data.converters.ItemStackConverter;
 import io.ebean.annotation.ConstraintMode;
+import io.ebean.annotation.DbDefault;
 import io.ebean.annotation.DbForeignKey;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,19 +16,19 @@ public class BTreasureLoot extends BModel {
     @Id
     private UUID id;
 
-    @ManyToOne(targetEntity = BTreasureChest.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
     public BTreasureChest chest;
 
     @Convert(converter = ItemStackConverter.class)
+    @Column(length = 65535, columnDefinition = "TEXT")
     private final ItemStack item;
 
-    private final double chance;
+    private int chance = 100;
 
-    public BTreasureLoot(BTreasureChest chest, ItemStack item, double chance) {
+    public BTreasureLoot(BTreasureChest chest, ItemStack item) {
         this.chest = chest;
         this.item = item;
-        this.chance = chance;
     }
 
     @Override
@@ -42,8 +43,12 @@ public class BTreasureLoot extends BModel {
         return item;
     }
 
-    public double chance() {
+    public int chance() {
         return chance;
+    }
+
+    public void setChance(int chance) {
+        this.chance = chance;
     }
 
     //

@@ -1,15 +1,12 @@
 package com.gufli.treasurechests.app;
 
-import co.aikar.commands.CommandManager;
-import co.aikar.commands.CommandReplacements;
-import co.aikar.commands.PaperCommandManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.gufli.treasurechests.app.commands.RootCommand;
 import com.gufli.treasurechests.app.data.DatabaseContext;
 import com.gufli.treasurechests.app.listeners.PlayerChestListener;
 import com.gufli.treasurechests.app.listeners.PlayerChestSetupListener;
 import com.gufli.treasurechests.app.listeners.PlayerConnectionListener;
+import com.guflimc.mastergui.bukkit.BukkitMasterGUI;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -50,7 +47,7 @@ public class TreasureChests extends JavaPlugin {
             databaseContext.withContextClassLoader(() -> {
                 databaseContext.init(config);
 
-                treasureChestManager = new TreasureChestManager(databaseContext);
+                treasureChestManager = new TreasureChestManager(this, databaseContext);
                 return null;
             });
         } catch (Exception ex) {
@@ -58,13 +55,8 @@ public class TreasureChests extends JavaPlugin {
             return;
         }
 
-        // commands
-        PaperCommandManager commandManager = new PaperCommandManager(this);
-        commandManager.enableUnstableAPI("help");
-        CommandReplacements replacements = commandManager.getCommandReplacements();
-        replacements.addReplacement("root", "treasurechests|tc");
-
-        commandManager.registerCommand(new RootCommand(treasureChestManager));
+        // init guis
+        BukkitMasterGUI.register(this);
 
         // events
         PluginManager pm = getServer().getPluginManager();
