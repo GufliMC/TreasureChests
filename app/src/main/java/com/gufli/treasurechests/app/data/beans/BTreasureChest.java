@@ -1,7 +1,7 @@
 package com.gufli.treasurechests.app.data.beans;
 
 import com.gufli.treasurechests.app.data.converters.LocationConverter;
-import org.bukkit.Bukkit;
+import io.ebean.annotation.DbDefault;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -17,12 +17,20 @@ public class BTreasureChest extends BModel {
     private UUID id;
 
     @Convert(converter = LocationConverter.class)
+    @Column(nullable = false)
     private final Location location;
 
     @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest")
     private List<BTreasureLoot> loot;
 
+    @Column(nullable = false)
+    @DbDefault("3600")
     private int respawnTime = 3600;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @DbDefault("PLAYER_BOUND")
+    private ChestMode mode = ChestMode.PLAYER_BOUND;
 
     public BTreasureChest(Location location) {
         this.location = location;
@@ -45,6 +53,14 @@ public class BTreasureChest extends BModel {
     public void setRespawnTime(int respawnTime) {
         respawnTime = Math.max(0, respawnTime);
         this.respawnTime = respawnTime;
+    }
+
+    public ChestMode mode() {
+        return mode;
+    }
+
+    public void setChestMode(ChestMode mode) {
+        this.mode = mode;
     }
 
     // loot

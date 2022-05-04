@@ -3,6 +3,7 @@ package com.gufli.treasurechests.app.listeners;
 import com.gufli.treasurechests.app.TreasureChestManager;
 import com.gufli.treasurechests.app.data.beans.BTreasureChest;
 import com.gufli.treasurechests.app.data.beans.BTreasureLoot;
+import com.gufli.treasurechests.app.data.beans.ChestMode;
 import com.guflimc.mastergui.bukkit.BukkitMasterGUI;
 import com.guflimc.mastergui.bukkit.api.IBukkitMenu;
 import com.guflimc.mastergui.bukkit.item.ItemStackBuilder;
@@ -32,7 +33,7 @@ public class PlayerChestSetupListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        if (!event.getBlock().getType().name().contains("CHEST")) {
+        if ( !manager.isTreasureChestType(event.getBlock().getType()) ) {
             return;
         }
 
@@ -58,7 +59,7 @@ public class PlayerChestSetupListener implements Listener {
         }
 
         Block block = event.getClickedBlock();
-        if (block == null || !block.getType().name().contains("CHEST")) {
+        if (block == null || !manager.isTreasureChestType(block.getType())) {
             return;
         }
 
@@ -116,6 +117,14 @@ public class PlayerChestSetupListener implements Listener {
                         ChatColor.GRAY + "Left click to change."
                 ).build();
 
+        ItemStack mode = ItemStackBuilder.of(Material.FLOWER_POT)
+                .withName(ChatColor.YELLOW + "Chest Mode")
+                .withLore(
+                        ChatColor.GRAY + "Mode: " + ChatColor.GOLD + chest.mode().name(),
+                        "",
+                        ChatColor.GRAY + "Left click to cycle."
+                ).build();
+
         ItemStack delete = ItemStackBuilder.of(Material.LAVA_BUCKET)
                 .withName(ChatColor.RED + "Delete chest")
                 .withLore(
@@ -131,6 +140,17 @@ public class PlayerChestSetupListener implements Listener {
                 })
                 .withItem(duration, (event) -> {
                     duration(player, chest);
+                    return true;
+                })
+                .withItem(mode, (event) -> {
+                    int ordinal = chest.mode().ordinal() + 1;
+                    if ( ordinal >= ChestMode.values().length ) {
+                        ordinal = 0;
+                    }
+
+                    chest.setChestMode(ChestMode.values()[ordinal]);
+                    manager.save(chest);
+                    info(player, chest);
                     return true;
                 })
                 .withItem(delete, (event) -> {

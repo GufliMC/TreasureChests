@@ -26,7 +26,7 @@ public class PlayerChestListener implements Listener {
         }
 
         Block block = event.getClickedBlock();
-        if (block == null) {
+        if (block == null || !manager.isTreasureChestType(block.getType())) {
             return;
         }
 

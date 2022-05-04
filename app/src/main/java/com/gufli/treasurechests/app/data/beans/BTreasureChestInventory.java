@@ -3,6 +3,8 @@ package com.gufli.treasurechests.app.data.beans;
 import com.gufli.treasurechests.app.data.converters.InventoryConverter;
 import io.ebean.annotation.ConstraintMode;
 import io.ebean.annotation.DbForeignKey;
+import io.ebean.annotation.WhenCreated;
+import io.ebean.annotation.WhenModified;
 import org.bukkit.inventory.Inventory;
 
 import javax.persistence.*;
@@ -16,23 +18,28 @@ public class BTreasureChestInventory extends BModel {
     @Id
     private UUID id;
 
+    @Column(nullable = false)
     private final UUID playerId;
 
     @ManyToOne(fetch = FetchType.EAGER, targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
+    @Column(nullable = false)
     private final BTreasureChest chest;
 
-    private final Instant time;
-
     @Convert(converter = InventoryConverter.class)
-    @Column(length = 65535, columnDefinition = "TEXT")
-    private Inventory inventory;
+    @Column(length = 65535, columnDefinition = "TEXT", nullable = false)
+    private final Inventory inventory;
+
+    @WhenCreated
+    Instant createdAt;
+
+    @WhenModified
+    Instant updatedAt;
 
     public BTreasureChestInventory(UUID playerId, BTreasureChest chest, Inventory inventory) {
         this.playerId = playerId;
         this.chest = chest;
         this.inventory = inventory;
-        this.time = Instant.now();
     }
 
     // getters
@@ -49,12 +56,12 @@ public class BTreasureChestInventory extends BModel {
         return inventory;
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
+    public Instant createdAt() {
+        return createdAt;
     }
 
-    public Instant time() {
-        return time;
+    public Instant updatedAt() {
+        return updatedAt;
     }
 
     //

@@ -18,12 +18,15 @@ public class BTreasureLoot extends BModel {
 
     @ManyToOne(targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
-    public BTreasureChest chest;
+    @Column(nullable = false)
+    public final BTreasureChest chest;
 
     @Convert(converter = ItemStackConverter.class)
-    @Column(length = 65535, columnDefinition = "TEXT")
+    @Column(length = 65535, columnDefinition = "TEXT", nullable = false)
     private final ItemStack item;
 
+    @Column(nullable = false)
+    @DbDefault("100")
     private int chance = 100;
 
     public BTreasureLoot(BTreasureChest chest, ItemStack item) {

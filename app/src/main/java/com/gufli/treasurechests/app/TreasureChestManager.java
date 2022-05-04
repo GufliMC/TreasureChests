@@ -1,15 +1,13 @@
 package com.gufli.treasurechests.app;
 
 import com.gufli.treasurechests.app.data.DatabaseContext;
-import com.gufli.treasurechests.app.data.beans.BModel;
-import com.gufli.treasurechests.app.data.beans.BTreasureChest;
-import com.gufli.treasurechests.app.data.beans.BTreasureChestInventory;
-import com.gufli.treasurechests.app.data.beans.BTreasureLoot;
+import com.gufli.treasurechests.app.data.beans.*;
 import com.gufli.treasurechests.app.data.beans.query.QBTreasureChest;
 import com.gufli.treasurechests.app.data.beans.query.QBTreasureChestInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
@@ -72,6 +70,10 @@ public class TreasureChestManager {
 
     //
 
+    public boolean isTreasureChestType(Material material) {
+        return material.name().contains("CHEST") || material.name().contains("SHULKER_BOX");
+    }
+
     public Inventory inventoryFor(Block block, Player player) {
         BTreasureChest chest = chestAt(block);
         if (chest == null) {
@@ -80,9 +82,9 @@ public class TreasureChestManager {
 
         BTreasureChestInventory tci = inventories.stream()
                 .filter(inv -> inv.chest().equals(chest))
-                .filter(inv -> inv.playerId().equals(player.getUniqueId()))
-                .filter(inv -> inv.time().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
-                .max(Comparator.comparing(BTreasureChestInventory::time))
+                .filter(inv -> inv.chest().mode() == ChestMode.SERVER_BOUND || inv.playerId().equals(player.getUniqueId()))
+                .filter(inv -> inv.createdAt().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
+                .max(Comparator.comparing(BTreasureChestInventory::createdAt))
                 .orElse(null);
 
         // return inventory if it already exists
