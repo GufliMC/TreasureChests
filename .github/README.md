@@ -1,85 +1,39 @@
-# BrickPermissions
+# TreasureChests
 
-An extension for [Minestom](https://github.com/Minestom/Minestom) to manage the permissions of players.
-Players can have individual permissions or can be assigned to a group with permissions. The data can be stored in a 
-database server or a local H2 file database.
+A Minecraft plugin for creating treasure chests that refill after a certain amount of time.
 
-## Install
+## Platforms
 
-Get the [release](https://github.com/MinestomBrick/BrickPermissions/releases)
-and place it in the extension folder of your minestom server.
+* [x] Bukkit / Spigot / Paper (1.18+)
 
-### Dependencies
-* [BrickI18n](https://github.com/MinestomBrick/BrickI18n)
+## Usage
 
-## Commands
+Shift + Left-click on a chest or shulker box. You need the `treasurechests.setup` permission.
+A gui will open where you can configure the treasure chest.
 
-Don't worry, console can execute all commands ;)
+### Modes
 
-| Command | Permission |
-|---|---|
-| **Players** ||
-| /bp player info (player) | brickpermissions.player.info |
-| /bp player permission add (player) (permission) | brickpermissions.player.permission.add |
-| /bp player permission remove (player) (permission) | brickpermissions.player.permission.remove |
-| **Groups** ||
-| /bp group add (name) | brickpermissions.group.add |
-| /bp group remove (group) | brickpermissions.group.remove |
-| /bp group list | brickpermissions.group.list | 
-| /bp group info (group) | brickpermissions.group.info |
-| /bp group permission add (group) (permission) | brickpermissions.group.permission.add |
-| /bp group permission remove (group) (permission) | brickpermissions.group.permission.remove |
+* PLAYER_BOUND: Each player that opens the chest will have their own individual inventory
+* SERVER_BOUND: The inventory of the chest will be shared with everyone on the server
 
-## Database
+### Respawn time
 
-You can change the database settings in the `config.json`.
+When the chest is opened, it will refill after the given duration. This is calculated individually for each player if the chest is PLAYER_BOUND.
+
+### Chances
+
+The chance is applied to each **item** in the **stack**, a stack of 40 with a chance of 50% will give approximately 20 items each time.
+
+### Database
+
+Data is stored in a flatfile database by default. You can also use mysql by changing editing `config.json`:
 
 ```json
 {
   "database": {
-    "dsn": "jdbc:h2:file:./extensions/BrickPermissions/data/database.h2",
-    "username": "dbuser",
-    "password": "dbuser"
+    "dsn": "jdbc:mysql://<hostname>:<port>/treasurechests",
+    "username": "<user>",
+    "password": "<password>"
   }
 }
 ```
-
-MySQL is supported, use the following format:
-
-````
-"dsn": "jdbc:mysql://<hostname>:<ip>/<database>"
-````
-
-## API
-
-### Maven
-```
-repositories {
-    maven { url "https://repo.jorisg.com/snapshots" }
-}
-
-dependencies {
-    implementation 'org.minestombrick.permissions:api:1.0-SNAPSHOT'
-}
-```
-
-### Usage
-
-Check the [javadocs](https://minestombrick.github.io/BrickPermissions/)
-
-#### Examples
-
-```
-// does not persist
-player.addPermission("super.cool.permission");
-
-// does persist
-PermissionAPI.get().addPermission(player, "super.cool.permission");
-
-PermissionAPI.get().addGroup("admin")
-    .thenCompose(group -> PermissionAPI.addPermission(group, "fly.mode"))
-    .thenCompose(v -> PermissionAPI.addGroup(player, group))
-```
-
-Note that the api returns completable futures. If you need to execute multiple operations
-on related objects, you have to wait for the previous operation to finish.
