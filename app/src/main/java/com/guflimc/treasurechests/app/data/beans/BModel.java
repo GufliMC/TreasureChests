@@ -1,6 +1,6 @@
-package com.gufli.treasurechests.app.data.beans;
+package com.guflimc.treasurechests.app.data.beans;
 
-import com.gufli.treasurechests.app.data.DatabaseContext;
+import com.guflimc.treasurechests.app.data.DatabaseContext;
 import org.minestombrick.ebean.BaseModel;
 import io.ebean.Model;
 import io.ebean.annotation.DbName;

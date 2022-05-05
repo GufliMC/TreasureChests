@@ -1,11 +1,11 @@
-package com.gufli.treasurechests.app.data;
+package com.guflimc.treasurechests.app.data;
 
-import com.gufli.treasurechests.app.data.beans.BTreasureChestInventory;
-import com.gufli.treasurechests.app.data.beans.BTreasureLoot;
-import com.gufli.treasurechests.app.data.beans.BTreasureChest;
-import com.gufli.treasurechests.app.data.converters.InventoryConverter;
-import com.gufli.treasurechests.app.data.converters.ItemStackConverter;
-import com.gufli.treasurechests.app.data.converters.LocationConverter;
+import com.guflimc.treasurechests.app.data.beans.BTreasureChest;
+import com.guflimc.treasurechests.app.data.beans.BTreasureChestInventory;
+import com.guflimc.treasurechests.app.data.beans.BTreasureLoot;
+import com.guflimc.treasurechests.app.data.converters.InventoryConverter;
+import com.guflimc.treasurechests.app.data.converters.ItemStackConverter;
+import com.guflimc.treasurechests.app.data.converters.LocationConverter;
 import io.ebean.config.DatabaseConfig;
 import org.minestombrick.ebean.context.AbstractDatabaseContext;
 

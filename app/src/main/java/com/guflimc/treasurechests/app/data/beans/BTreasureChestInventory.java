@@ -1,6 +1,8 @@
-package com.gufli.treasurechests.app.data.beans;
+package com.guflimc.treasurechests.app.data.beans;
 
-import com.gufli.treasurechests.app.data.converters.InventoryConverter;
+import com.guflimc.treasurechests.app.data.converters.InventoryConverter;
+import com.guflimc.treasurechests.app.util.DatabaseWrapper;
+import io.ebean.Transaction;
 import io.ebean.annotation.ConstraintMode;
 import io.ebean.annotation.DbForeignKey;
 import io.ebean.annotation.WhenCreated;
@@ -21,14 +23,14 @@ public class BTreasureChestInventory extends BModel {
     @Column(nullable = false)
     private final UUID playerId;
 
-    @ManyToOne(fetch = FetchType.EAGER, targetEntity = BTreasureChest.class)
+    @ManyToOne(targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
     @Column(nullable = false)
     private final BTreasureChest chest;
 
     @Convert(converter = InventoryConverter.class)
     @Column(length = 65535, columnDefinition = "TEXT", nullable = false)
-    private final Inventory inventory;
+    private DatabaseWrapper<Inventory> inventory;
 
     @WhenCreated
     Instant createdAt;
@@ -39,7 +41,13 @@ public class BTreasureChestInventory extends BModel {
     public BTreasureChestInventory(UUID playerId, BTreasureChest chest, Inventory inventory) {
         this.playerId = playerId;
         this.chest = chest;
-        this.inventory = inventory;
+        this.inventory = new DatabaseWrapper<>(inventory);
+    }
+
+    @Override
+    public void update(Transaction transaction) {
+        transaction.setUpdateAllLoadedProperties(true);
+        super.update(transaction);
     }
 
     // getters
@@ -53,7 +61,11 @@ public class BTreasureChestInventory extends BModel {
     }
 
     public Inventory inventory() {
-        return inventory;
+        return inventory.value;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = new DatabaseWrapper<>(inventory);
     }
 
     public Instant createdAt() {
@@ -62,18 +74,6 @@ public class BTreasureChestInventory extends BModel {
 
     public Instant updatedAt() {
         return updatedAt;
-    }
-
-    //
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof BTreasureChestInventory pa) && pa.id.equals(id);
     }
 
 }

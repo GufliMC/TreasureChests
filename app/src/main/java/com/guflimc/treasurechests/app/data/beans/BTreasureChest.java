@@ -1,6 +1,6 @@
-package com.gufli.treasurechests.app.data.beans;
+package com.guflimc.treasurechests.app.data.beans;
 
-import com.gufli.treasurechests.app.data.converters.LocationConverter;
+import com.guflimc.treasurechests.app.data.converters.LocationConverter;
 import io.ebean.annotation.DbDefault;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
@@ -79,15 +79,4 @@ public class BTreasureChest extends BModel {
         this.loot.remove(loot);
     }
 
-    //
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof BTreasureChest btc) && btc.id.equals(id);
-    }
 }

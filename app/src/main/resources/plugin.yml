@@ -3,5 +3,5 @@ author: 'Joris Guffens'
 version: ${pluginVersion}
 description: 'TreasureChests'
 website: 'kingdomcraft.be'
-main: com.gufli.treasurechests.app.TreasureChests
+main: com.guflimc.treasurechests.app.TreasureChests
 api-version: 1.13

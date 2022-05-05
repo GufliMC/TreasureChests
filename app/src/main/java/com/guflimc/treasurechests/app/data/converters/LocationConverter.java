@@ -1,4 +1,4 @@
-package com.gufli.treasurechests.app.data.converters;
+package com.guflimc.treasurechests.app.data.converters;
 
 import com.google.gson.*;
 import org.bukkit.Bukkit;

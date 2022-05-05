@@ -1,16 +1,14 @@
-package com.gufli.treasurechests.app;
+package com.guflimc.treasurechests.app;
 
-import com.gufli.treasurechests.app.data.DatabaseContext;
-import com.gufli.treasurechests.app.data.beans.*;
-import com.gufli.treasurechests.app.data.beans.query.QBTreasureChest;
-import com.gufli.treasurechests.app.data.beans.query.QBTreasureChestInventory;
+import com.guflimc.treasurechests.app.data.DatabaseContext;
+import com.guflimc.treasurechests.app.data.beans.*;
+import com.guflimc.treasurechests.app.data.beans.query.QBTreasureChest;
+import com.guflimc.treasurechests.app.data.beans.query.QBTreasureChestInventory;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
@@ -54,7 +52,9 @@ public class TreasureChestManager {
     }
 
     public void load(Player player) {
-        inventories.addAll(new QBTreasureChestInventory().playerId.eq(player.getUniqueId()).findSet());
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            inventories.addAll(new QBTreasureChestInventory().playerId.eq(player.getUniqueId()).findSet());
+        });
     }
 
     public void unload(Player player) {
@@ -62,10 +62,16 @@ public class TreasureChestManager {
     }
 
     public void save(Player player, Inventory inventory) {
-        inventories.stream()
+        BTreasureChestInventory tci = inventories.stream()
                 .filter(inv -> inv.playerId().equals(player.getUniqueId()))
                 .filter(inv -> inv.inventory().equals(inventory))
-                .findAny().ifPresent(this::save);
+                .findFirst().orElse(null);
+        if ( tci == null ) {
+            return;
+        }
+
+        tci.setInventory(inventory);
+        save(tci);
     }
 
     //
@@ -115,14 +121,10 @@ public class TreasureChestManager {
         }
 
         // get size of chest
-        int size = 27;
-        if (block.getState() instanceof DoubleChest) {
-            size = 54;
-        }
-
-        Inventory inv = Bukkit.createInventory(null, size, ChatColor.DARK_PURPLE + "Treasure Chest");
-
+        int size = isDoubleChest(block) ? 54 : 27;
+        Inventory inv = Bukkit.createInventory(null, size);
         Set<Integer> indexes = new HashSet<>();
+
         for (ItemStack item : items) {
             // generate random index in inventory
             int index;
@@ -133,11 +135,16 @@ public class TreasureChestManager {
 
             // set item at index
             inv.setItem(index, item);
+
+            if (indexes.size() == inv.getSize()) {
+                break;
+            }
         }
 
         // save current inventory
         BTreasureChestInventory ntci = new BTreasureChestInventory(player.getUniqueId(), chest, inv);
-        save(ntci).thenRun(() -> inventories.add(ntci));
+        inventories.add(ntci);
+        save(ntci);
 
         return inv;
     }
@@ -154,6 +161,8 @@ public class TreasureChestManager {
                 chests.remove(btc);
             } else if (m instanceof BTreasureLoot btl) {
                 btl.chest.removeLoot(btl);
+            } else if (m instanceof BTreasureChestInventory btci) {
+                inventories.remove(btci);
             }
         }
 
@@ -164,6 +173,10 @@ public class TreasureChestManager {
 
     public Collection<BTreasureChest> chests() {
         return Collections.unmodifiableSet(chests);
+    }
+
+    private boolean isDoubleChest(Block block) {
+        return block.getState() instanceof Chest chest && chest.getInventory() instanceof DoubleChestInventory;
     }
 
     public BTreasureChest chestAt(Block block) {

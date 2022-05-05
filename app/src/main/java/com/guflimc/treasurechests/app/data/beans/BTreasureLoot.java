@@ -1,6 +1,6 @@
-package com.gufli.treasurechests.app.data.beans;
+package com.guflimc.treasurechests.app.data.beans;
 
-import com.gufli.treasurechests.app.data.converters.ItemStackConverter;
+import com.guflimc.treasurechests.app.data.converters.ItemStackConverter;
 import io.ebean.annotation.ConstraintMode;
 import io.ebean.annotation.DbDefault;
 import io.ebean.annotation.DbForeignKey;
@@ -52,18 +52,6 @@ public class BTreasureLoot extends BModel {
 
     public void setChance(int chance) {
         this.chance = chance;
-    }
-
-    //
-
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof BTreasureLoot bl) && bl.id.equals(id);
     }
 
 }

@@ -9,8 +9,7 @@ repositories {
 dependencies {
     implementation project(':app')
 
-    runtimeOnly 'org.bukkit:bukkit:1.8.8-R0.1-SNAPSHOT'
-    runtimeOnly 'co.aikar:acf-paper:0.5.1-SNAPSHOT'
+    runtimeOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
 
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.minestombrick.ebean:api:1.0-SNAPSHOT'

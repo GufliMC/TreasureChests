@@ -1,9 +1,9 @@
-package com.gufli.treasurechests.app.listeners;
+package com.guflimc.treasurechests.app.listeners;
 
-import com.gufli.treasurechests.app.TreasureChestManager;
-import com.gufli.treasurechests.app.data.beans.BTreasureChest;
-import com.gufli.treasurechests.app.data.beans.BTreasureLoot;
-import com.gufli.treasurechests.app.data.beans.ChestMode;
+import com.guflimc.treasurechests.app.TreasureChestManager;
+import com.guflimc.treasurechests.app.data.beans.BTreasureChest;
+import com.guflimc.treasurechests.app.data.beans.BTreasureLoot;
+import com.guflimc.treasurechests.app.data.beans.ChestMode;
 import com.guflimc.mastergui.bukkit.BukkitMasterGUI;
 import com.guflimc.mastergui.bukkit.api.IBukkitMenu;
 import com.guflimc.mastergui.bukkit.item.ItemStackBuilder;

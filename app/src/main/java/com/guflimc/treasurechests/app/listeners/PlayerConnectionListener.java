@@ -1,6 +1,6 @@
-package com.gufli.treasurechests.app.listeners;
+package com.guflimc.treasurechests.app.listeners;
 
-import com.gufli.treasurechests.app.TreasureChestManager;
+import com.guflimc.treasurechests.app.TreasureChestManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;

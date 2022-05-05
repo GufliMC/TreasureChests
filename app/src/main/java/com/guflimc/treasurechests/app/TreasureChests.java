@@ -1,11 +1,11 @@
-package com.gufli.treasurechests.app;
+package com.guflimc.treasurechests.app;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.gufli.treasurechests.app.data.DatabaseContext;
-import com.gufli.treasurechests.app.listeners.PlayerChestListener;
-import com.gufli.treasurechests.app.listeners.PlayerChestSetupListener;
-import com.gufli.treasurechests.app.listeners.PlayerConnectionListener;
+import com.guflimc.treasurechests.app.data.DatabaseContext;
+import com.guflimc.treasurechests.app.listeners.PlayerChestListener;
+import com.guflimc.treasurechests.app.listeners.PlayerChestSetupListener;
+import com.guflimc.treasurechests.app.listeners.PlayerConnectionListener;
 import com.guflimc.mastergui.bukkit.BukkitMasterGUI;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
