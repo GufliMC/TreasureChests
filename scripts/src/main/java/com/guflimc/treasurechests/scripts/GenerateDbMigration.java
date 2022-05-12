@@ -1,6 +1,6 @@
 package com.guflimc.treasurechests.scripts;
 
-import com.guflimc.treasurechests.app.data.DatabaseContext;
+import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import io.ebean.annotation.Platform;
 import org.minestombrick.ebean.migration.MigrationGenerator;
 

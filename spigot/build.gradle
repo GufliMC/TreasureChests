@@ -1,0 +1,35 @@
+plugins {
+    id('io.ebean') version '12.+'
+    id 'net.minecrell.plugin-yml.bukkit' version '0.5.1'
+}
+
+repositories {
+    maven { url "https://repo.aikar.co/content/groups/aikar/" }
+}
+
+dependencies {
+    compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'com.google.code.gson:gson:2.+'
+
+    library 'io.ebean:ebean-querybean:12.+'
+    library 'io.ebean:ebean:12.+'
+    library 'io.ebean:ebean-ddl-generator:12.+'
+    annotationProcessor 'io.ebean:querybean-generator:12.+'
+
+    library 'org.glassfish.jaxb:jaxb-runtime:2.+'
+    library 'com.h2database:h2:2.+'
+
+    // shade
+    implementation 'com.guflimc.brick.gui:spigot-api:+'
+}
+
+bukkit {
+    name = rootProject.name
+    main = 'com.guflimc.treasurechests.spigot.TreasureChests'
+    description = 'Treasure chests plugin for mc 1.18+'
+    author = 'GufliMC'
+    website = 'https://github.com/GufliMC/TreasureChests'
+}
+
+// I want it nice like that
+generateBukkitPluginDescription.group = "minecraft"

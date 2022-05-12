@@ -1,7 +1,5 @@
 rootProject.name = 'TreasureChests'
 
-include(
-	'app',
-	'scripts'
-)
+include 'scripts'
+include 'spigot'
 
