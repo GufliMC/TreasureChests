@@ -1,26 +1,25 @@
 plugins {
-    id('io.ebean') version '12.+'
+    id('io.ebean') version '13.+'
     id 'net.minecrell.plugin-yml.bukkit' version '0.5.1'
 }
 
-repositories {
-    maven { url "https://repo.aikar.co/content/groups/aikar/" }
-}
-
 dependencies {
+    // provided at runtime
     compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.google.code.gson:gson:2.+'
 
-    library 'io.ebean:ebean-querybean:12.+'
-    library 'io.ebean:ebean:12.+'
-    library 'io.ebean:ebean-ddl-generator:12.+'
-    annotationProcessor 'io.ebean:querybean-generator:12.+'
+    // included in plugin.yml
+    library 'io.ebean:ebean-querybean:13.+'
+    library 'io.ebean:ebean:13.+'
+    annotationProcessor 'io.ebean:querybean-generator:13.+'
 
     library 'org.glassfish.jaxb:jaxb-runtime:2.+'
     library 'com.h2database:h2:2.+'
+    library 'mysql:mysql-connector-java:8.+'
 
     // shade
     implementation 'com.guflimc.brick.gui:spigot-api:+'
+    implementation 'com.gufli.dbeantools:spigot-api:+'
 }
 
 bukkit {

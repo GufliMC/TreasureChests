@@ -16,10 +16,7 @@ subprojects {
     }
 
     dependencies {
-        implementation 'io.ebean:ebean:12.+'
-        implementation 'io.ebean:ebean-ddl-generator:12.+'
 
-        implementation 'com.gufli.dbeantools:spigot-api:+'
     }
 }
 

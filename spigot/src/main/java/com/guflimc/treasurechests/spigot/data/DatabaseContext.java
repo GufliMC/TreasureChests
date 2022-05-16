@@ -7,10 +7,6 @@ import com.guflimc.treasurechests.spigot.data.beans.BTreasureLoot;
 import com.guflimc.treasurechests.spigot.data.converters.InventoryConverter;
 import com.guflimc.treasurechests.spigot.data.converters.ItemStackConverter;
 import com.guflimc.treasurechests.spigot.data.converters.LocationConverter;
-import io.ebean.config.DatabaseConfig;
-
-import java.util.Collection;
-import java.util.Set;
 
 public class DatabaseContext extends AbstractDatabaseContext {
 
@@ -20,13 +16,8 @@ public class DatabaseContext extends AbstractDatabaseContext {
         super(DATASOURCE_NAME);
     }
 
-    @Override
-    protected void buildConfig(DatabaseConfig config) {
-        classes().forEach(config::addClass);
-    }
-
-    public static Collection<Class<?>> classes() {
-        return Set.of(
+    public Class<?>[] classes() {
+        return new Class[]{
                 ItemStackConverter.class,
                 LocationConverter.class,
                 InventoryConverter.class,
@@ -34,7 +25,7 @@ public class DatabaseContext extends AbstractDatabaseContext {
                 BTreasureChest.class,
                 BTreasureLoot.class,
                 BTreasureChestInventory.class
-        );
+        };
     }
 
 }
