@@ -3,8 +3,6 @@ name: Gradle test, build and upload artifact
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
 
 jobs:
   test:
