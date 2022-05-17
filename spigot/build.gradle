@@ -43,24 +43,3 @@ bukkit {
 
 // I want it nice like that
 generateBukkitPluginDescription.group = "minecraft"
-
-shadowJar {
-
-//    configurations = [project.configurations.runtimeClasspath]
-//
-    def modules = project
-            .configurations
-            .runtimeClasspath
-            .resolvedConfiguration
-            .getLenientConfiguration()
-            .getAllModuleDependencies()
-            .collect {
-                it.name
-            }
-    println modules
-
-    copy {
-        from "build/libs/" + archiveFileName.get()
-        into 'D:\\Documents\\testservers\\1.18\\plugins'
-    }
-}
