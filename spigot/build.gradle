@@ -1,23 +1,33 @@
 plugins {
-    id('io.ebean') version '13.+'
+    id 'io.ebean' version '13.+'
     id 'net.minecrell.plugin-yml.bukkit' version '0.5.1'
 }
 
+configurations {
+    rootImplementation {
+        transitive false
+    }
+    implementation.extendsFrom rootImplementation
+}
+
 dependencies {
+    // required for build process
+    annotationProcessor 'io.ebean:querybean-generator:13.+'
+
     // provided at runtime
     compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.google.code.gson:gson:2.+'
 
-    // included in plugin.yml
-    library 'io.ebean:ebean-querybean:13.+'
-    library 'io.ebean:ebean:13.+'
-    annotationProcessor 'io.ebean:querybean-generator:13.+'
+    // shadow - ebean does not work well with spigot libraries
+    implementation 'io.ebean:ebean-core:13.+'
+    implementation 'io.ebean:ebean-querybean:13.+'
+    implementation 'io.ebean:ebean-datasource:8.+'
 
-    library 'org.glassfish.jaxb:jaxb-runtime:2.+'
-    library 'com.h2database:h2:2.+'
-    library 'mysql:mysql-connector-java:8.+'
+    // h2 platform + driver
+    implementation 'io.ebean:ebean-platform-h2:13.+'
+    implementation 'com.h2database:h2:2.+'
 
-    // shade
+    // gufli tools
     implementation 'com.guflimc.brick.gui:spigot-api:+'
     implementation 'com.gufli.dbeantools:spigot-api:+'
 }
@@ -28,7 +38,29 @@ bukkit {
     description = 'Treasure chests plugin for mc 1.18+'
     author = 'GufliMC'
     website = 'https://github.com/GufliMC/TreasureChests'
+    apiVersion = '1.18'
 }
 
 // I want it nice like that
 generateBukkitPluginDescription.group = "minecraft"
+
+shadowJar {
+
+//    configurations = [project.configurations.runtimeClasspath]
+//
+    def modules = project
+            .configurations
+            .runtimeClasspath
+            .resolvedConfiguration
+            .getLenientConfiguration()
+            .getAllModuleDependencies()
+            .collect {
+                it.name
+            }
+    println modules
+
+    copy {
+        from "build/libs/" + archiveFileName.get()
+        into 'D:\\Documents\\testservers\\1.18\\plugins'
+    }
+}

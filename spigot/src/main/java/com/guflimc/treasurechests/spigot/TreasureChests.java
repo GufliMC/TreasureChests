@@ -27,8 +27,6 @@ public class TreasureChests extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        getLogger().info("Enabling " + nameAndVersion() + ".");
-
         saveResource("config.json", false);
 
         // LOAD CONFIG
@@ -49,6 +47,7 @@ public class TreasureChests extends JavaPlugin {
         try {
             databaseContext.withContextClassLoader(() -> {
                 databaseContext.init(config.database);
+                databaseContext.migrate();
 
                 treasureChestManager = new TreasureChestManager(this, databaseContext);
                 return null;

@@ -101,7 +101,7 @@ public class TreasureChestManager {
         // get items and randomize winning chances
         List<ItemStack> items = new ArrayList<>();
         for (BTreasureLoot loot : chest.loot()) {
-            if (loot.chance() >= 1) {
+            if (loot.chance() >= 100) {
                 items.add(loot.item().clone());
                 continue;
             }
@@ -123,23 +123,9 @@ public class TreasureChestManager {
         // get size of chest
         int size = isDoubleChest(block) ? 54 : 27;
         Inventory inv = Bukkit.createInventory(null, size);
-        Set<Integer> indexes = new HashSet<>();
 
-        for (ItemStack item : items) {
-            // generate random index in inventory
-            int index;
-            do {
-                index = random.nextInt(size);
-            } while (indexes.contains(index));
-            indexes.add(index);
-
-            // set item at index
-            inv.setItem(index, item);
-
-            if (indexes.size() == inv.getSize()) {
-                break;
-            }
-        }
+        // fill chess with spread
+        spread(items, inv);
 
         // save current inventory
         BTreasureChestInventory ntci = new BTreasureChestInventory(player.getUniqueId(), chest, inv);
@@ -147,6 +133,48 @@ public class TreasureChestManager {
         save(ntci);
 
         return inv;
+    }
+
+    private void spread(List<ItemStack> items, Inventory inv) {
+        // spread
+        outer: while ( items.size() < (int) (inv.getSize() * 0.75) ) {
+            Collections.shuffle(items);
+            for ( int i = 0; i < items.size(); i++ ) {
+                ItemStack item = items.get(i);
+                if ( item.getAmount() == 1 ) {
+                    continue;
+                }
+
+                int amount = item.getAmount();
+                int half = amount / 2;
+                item.setAmount(amount - half);
+
+                ItemStack clone = item.clone();
+                clone.setAmount(half);
+                items.add(clone);
+
+                continue outer;
+            }
+
+            break;
+        }
+
+        Set<Integer> indexes = new HashSet<>();
+        for (ItemStack item : items) {
+            // generate random index in inventory
+            int index;
+            do {
+                index = random.nextInt(inv.getSize());
+            } while (indexes.contains(index));
+            indexes.add(index);
+
+            // set item at index
+            inv.setItem(index, item);
+
+            if (indexes.size() == inv.getSize()) {
+                return;
+            }
+        }
     }
 
     // DATABASE
@@ -175,7 +203,11 @@ public class TreasureChestManager {
         return Collections.unmodifiableSet(chests);
     }
 
-    private boolean isDoubleChest(Block block) {
+    public boolean isDoubleChest(Location location) {
+        return isDoubleChest(location.getBlock());
+    }
+
+    public boolean isDoubleChest(Block block) {
         return block.getState() instanceof Chest chest && chest.getInventory() instanceof DoubleChestInventory;
     }
 

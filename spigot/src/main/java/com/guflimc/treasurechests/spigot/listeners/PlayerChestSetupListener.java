@@ -183,8 +183,16 @@ public class PlayerChestSetupListener implements Listener {
     private final ItemStack back = ItemStackBuilder.of(Material.PAPER).withName(ChatColor.GREEN + "Back").build();
 
     private void loot(Player player, BTreasureChest chest) {
-        ISpigotMenu menu = SpigotBrickGUI.create(54, ChatColor.DARK_PURPLE + "Drop items to add loot.");
-        for (int i = 0; i < chest.loot().size(); i++) {
+        int size = manager.isDoubleChest(chest.location()) ? 54 : 36;
+
+        // remove excess loot
+        if ( chest.loot().size() > size ) {
+            manager.delete(chest.loot().subList(size, chest.loot().size()).toArray(BTreasureLoot[]::new));
+            manager.save(chest);
+        }
+
+        ISpigotMenu menu = SpigotBrickGUI.create(size, ChatColor.DARK_PURPLE + "Drop items to add loot.");
+        for (int i = 0; i < Math.min(size - 9, chest.loot().size()); i++) {
             BTreasureLoot loot = chest.loot().get(i);
             ItemStack item = ItemStackBuilder.of(loot.item())
                     .withLore(
@@ -200,7 +208,7 @@ public class PlayerChestSetupListener implements Listener {
                     loot(player, chest);
                     return true;
                 } else if ( event.getClick() == ClickType.LEFT) {
-                    amount(player, loot);
+                    dropchance(player, loot);
                     return true;
                 }
                 return false;
@@ -231,7 +239,7 @@ public class PlayerChestSetupListener implements Listener {
         });
 
         // back item
-        menu.setItem(49, back, (event) -> {
+        menu.setItem(size - 5, back, (event) -> {
             info(player, chest);
             return true;
         });
@@ -276,7 +284,7 @@ public class PlayerChestSetupListener implements Listener {
         menu.open(player);
     }
 
-    private void amount(Player player, BTreasureLoot loot) {
+    private void dropchance(Player player, BTreasureLoot loot) {
         ISpigotMenu menu = SpigotBrickGUI.create(45, ChatColor.DARK_PURPLE + "Chance: " +
                 ChatColor.LIGHT_PURPLE + loot.chance() + "%");
 
@@ -284,7 +292,7 @@ public class PlayerChestSetupListener implements Listener {
             int chance = Math.min(100, Math.max(0, loot.chance() + amount));
             loot.setChance(chance);
             manager.save(loot);
-            amount(player, loot);
+            dropchance(player, loot);
             return true;
         };
 
@@ -297,7 +305,7 @@ public class PlayerChestSetupListener implements Listener {
         menu.setItem(23, ItemStackBuilder.of(plus10).withName(ChatColor.GREEN + "+10%").build(), callback.apply(10));
 
         menu.setItem(40, back, (event) -> {
-            info(player, loot.chest);
+            loot(player, loot.chest);
             return true;
         });
 
