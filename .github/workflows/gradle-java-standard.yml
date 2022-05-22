@@ -6,11 +6,11 @@ on:
 
 jobs:
   test:
-    uses: MinestomBrick/.github/.github/workflows/java-gradle-test.yml@main
+    uses: GufliOfficial/.github/.github/workflows/java-gradle-test.yml@main
 
   pre-release:
     needs: test
-    uses: MinestomBrick/.github/.github/workflows/java-gradle-github-release.yml@main
+    uses: GufliOfficial/.github/.github/workflows/java-gradle-github-release.yml@main
     with:
       files: |
         spigot/build/libs/*.jar
