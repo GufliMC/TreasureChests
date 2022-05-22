@@ -15,7 +15,7 @@ dependencies {
     annotationProcessor 'io.ebean:querybean-generator:13.+'
 
     // provided at runtime
-    compileOnly 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.google.code.gson:gson:2.+'
 
     // shadow - ebean does not work well with spigot libraries
@@ -35,10 +35,10 @@ dependencies {
 bukkit {
     name = rootProject.name
     main = 'com.guflimc.treasurechests.spigot.TreasureChests'
-    description = 'Treasure chests plugin for mc 1.18+'
+    description = 'Treasure chests plugin for mc 1.16+'
     author = 'GufliMC'
     website = 'https://github.com/GufliMC/TreasureChests'
-    apiVersion = '1.18'
+    apiVersion = '1.16'
 }
 
 // I want it nice like that
