@@ -11,3 +11,6 @@ jobs:
   pre-release:
     needs: test
     uses: MinestomBrick/.github/.github/workflows/java-gradle-github-release.yml@main
+    with:
+      files: |
+        spigot/build/libs/*.jar

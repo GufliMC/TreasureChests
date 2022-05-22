@@ -3,8 +3,10 @@
 A Minecraft plugin for creating treasure chests that refill after a certain amount of time.
 
 ## Platforms
+Note: Java 17 is required
 
-* [x] Bukkit / Spigot / Paper (1.18+)
+* [x] Bukkit / Spigot / Paper (1.16+)
+
 
 ## Usage
 
