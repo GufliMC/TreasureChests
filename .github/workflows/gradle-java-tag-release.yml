@@ -1,0 +1,17 @@
+name: Gradle test and release on tag
+
+on:
+  push:
+    tags:
+    - "v*"
+
+jobs:
+  test:
+    uses: GufliOfficial/.github/.github/workflows/java-gradle-test.yml@main
+
+  release:
+    needs: test
+    uses: GufliOfficial/.github/.github/workflows/java-gradle-github-release.yml@main
+    with:
+      files: |
+        spigot/build/libs/*.jar

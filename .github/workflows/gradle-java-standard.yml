@@ -1,4 +1,4 @@
-name: Gradle test, build and upload artifact
+name: Gradle test
 
 on:
   push:
@@ -7,10 +7,3 @@ on:
 jobs:
   test:
     uses: GufliOfficial/.github/.github/workflows/java-gradle-test.yml@main
-
-  pre-release:
-    needs: test
-    uses: GufliOfficial/.github/.github/workflows/java-gradle-github-release.yml@main
-    with:
-      files: |
-        spigot/build/libs/*.jar
