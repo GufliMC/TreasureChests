@@ -1,7 +1,9 @@
 package com.guflimc.treasurechests.spigot.data.beans;
 
+import com.gufli.dbeantools.adventure.converters.ComponentConverter;
 import com.guflimc.treasurechests.spigot.data.converters.LocationConverter;
 import io.ebean.annotation.DbDefault;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
@@ -31,6 +33,14 @@ public class BTreasureChest extends BModel {
     @Column(nullable = false)
     @DbDefault("PLAYER_BOUND")
     private ChestMode mode = ChestMode.PLAYER_BOUND;
+
+    @Column(nullable = false)
+    @DbDefault("true")
+    private boolean splitStacks = true;
+
+    @Column(length = 4096)
+    @Convert(converter = ComponentConverter.class, attributeName = "title")
+    private Component title;
 
     public BTreasureChest(Location location) {
         this.location = location;
@@ -79,4 +89,22 @@ public class BTreasureChest extends BModel {
         this.loot.remove(loot);
     }
 
+    public boolean splitStacks() {
+        return splitStacks;
+    }
+
+    public void setSplitStacks(boolean splitStacks) {
+        this.splitStacks = splitStacks;
+    }
+
+    public Component title() {
+        if ( title == null ) {
+            return Component.text("Treasure Chest");
+        }
+        return title;
+    }
+
+    public void setTitle(Component title) {
+        this.title = title;
+    }
 }

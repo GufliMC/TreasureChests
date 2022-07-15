@@ -7,25 +7,35 @@ import com.guflimc.treasurechests.spigot.TreasureChestManager;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureChest;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureLoot;
 import com.guflimc.treasurechests.spigot.data.beans.ChestMode;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class PlayerChestSetupListener implements Listener {
 
     private final TreasureChestManager manager;
+
+    private final Map<Player, BTreasureChest> changeTitleSession = new HashMap<>();
 
     public PlayerChestSetupListener(TreasureChestManager manager) {
         this.manager = manager;
@@ -84,6 +94,34 @@ public class PlayerChestSetupListener implements Listener {
         info(event.getPlayer(), chest);
     }
 
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        changeTitleSession.remove(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        BTreasureChest chest = changeTitleSession.get(player);
+        if ( chest == null ) {
+            return;
+        }
+
+        event.setCancelled(true);
+        changeTitleSession.remove(player);
+
+        Bukkit.getScheduler().runTask(manager.plugin, () -> {
+            if ( event.getMessage().equalsIgnoreCase("cancel") ) {
+                info(player, chest);
+                return;
+            }
+
+            chest.setTitle(MiniMessage.miniMessage().deserialize(event.getMessage()));
+            manager.save(chest);
+            info(player, chest);
+        });
+    }
+
     // MENUS
 
     private void create(Player player, Block block) {
@@ -125,6 +163,22 @@ public class PlayerChestSetupListener implements Listener {
                         ChatColor.GRAY + "Left click to cycle."
                 ).build();
 
+        ItemStack splitStacks = ItemStackBuilder.of(Material.HOPPER)
+                .withName(ChatColor.YELLOW + "Split Stacks")
+                .withLore(
+                        ChatColor.GRAY + "Value: " + (chest.splitStacks() ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"),
+                        "",
+                        ChatColor.GRAY + "Left click to toggle."
+                ).build();
+
+        ItemStack title = ItemStackBuilder.of(Material.NAME_TAG)
+                .withName(ChatColor.YELLOW + "Title")
+                .withLore(
+                        ChatColor.GRAY + "Value: " + BukkitComponentSerializer.legacy().serialize(chest.title()),
+                        "",
+                        ChatColor.GRAY + "Left click to change."
+                ).build();
+
         ItemStack delete = ItemStackBuilder.of(Material.LAVA_BUCKET)
                 .withName(ChatColor.RED + "Delete chest")
                 .withLore(
@@ -151,6 +205,18 @@ public class PlayerChestSetupListener implements Listener {
                     chest.setChestMode(ChestMode.values()[ordinal]);
                     manager.save(chest);
                     info(player, chest);
+                    return true;
+                })
+                .withItem(splitStacks, (event) -> {
+                    chest.setSplitStacks(!chest.splitStacks());
+                    manager.save(chest);
+                    info(player, chest);
+                    return true;
+                })
+                .withItem(title, (event) -> {
+                    changeTitleSession.put(player, chest);
+                    player.closeInventory();
+                    player.sendMessage(ChatColor.GREEN + "Enter a new title in the chat or type 'cancel' to abort.");
                     return true;
                 })
                 .withItem(delete, (event) -> {

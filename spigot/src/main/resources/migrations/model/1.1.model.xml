@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="treasure_chests">
+            <column name="item_spread" type="boolean" defaultValue="true" notnull="true"/>
+            <column name="title" type="varchar(4096)"/>
+        </addColumn>
+    </changeSet>
+</migration>

@@ -4,6 +4,7 @@ import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.data.beans.*;
 import com.guflimc.treasurechests.spigot.data.beans.query.QBTreasureChest;
 import com.guflimc.treasurechests.spigot.data.beans.query.QBTreasureChestInventory;
+import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -23,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 public class TreasureChestManager {
 
     private final DatabaseContext databaseContext;
-    private final JavaPlugin plugin;
+    public final JavaPlugin plugin;
 
     private final Set<BTreasureChest> chests = new HashSet<>();
     private final Set<BTreasureChestInventory> inventories = new HashSet<>();
@@ -66,7 +67,7 @@ public class TreasureChestManager {
                 .filter(inv -> inv.playerId().equals(player.getUniqueId()))
                 .filter(inv -> inv.inventory().equals(inventory))
                 .findFirst().orElse(null);
-        if ( tci == null ) {
+        if (tci == null) {
             return;
         }
 
@@ -122,10 +123,16 @@ public class TreasureChestManager {
 
         // get size of chest
         int size = isDoubleChest(block) ? 54 : 27;
-        Inventory inv = Bukkit.createInventory(null, size);
+        String title = BukkitComponentSerializer.legacy().serialize(chest.title());
+        Inventory inv = Bukkit.createInventory(null, size, title);
 
         // fill chess with spread
-        spread(items, inv);
+        if ( chest.splitStacks() ) {
+            spread(items, inv.getSize());
+        }
+
+        // put items in inventory
+        fill(items, inv);
 
         // save current inventory
         BTreasureChestInventory ntci = new BTreasureChestInventory(player.getUniqueId(), chest, inv);
@@ -135,13 +142,14 @@ public class TreasureChestManager {
         return inv;
     }
 
-    private void spread(List<ItemStack> items, Inventory inv) {
+    private void spread(List<ItemStack> items, int invSize) {
         // spread
-        outer: while ( items.size() < (int) (inv.getSize() * 0.75) ) {
+        outer:
+        while (items.size() < (int) (invSize * 0.75)) {
             Collections.shuffle(items);
-            for ( int i = 0; i < items.size(); i++ ) {
+            for (int i = 0; i < items.size(); i++) {
                 ItemStack item = items.get(i);
-                if ( item.getAmount() == 1 ) {
+                if (item.getAmount() == 1) {
                     continue;
                 }
 
@@ -158,7 +166,9 @@ public class TreasureChestManager {
 
             break;
         }
+    }
 
+    private void fill(List<ItemStack> items, Inventory inv) {
         Set<Integer> indexes = new HashSet<>();
         for (ItemStack item : items) {
             // generate random index in inventory

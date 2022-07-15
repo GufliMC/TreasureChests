@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<migration xmlns="http://ebean-orm.github.io/xml/ns/dbmigration">
+    <changeSet type="apply">
+        <addColumn tableName="treasure_chests">
+            <column name="split_stacks" type="boolean" defaultValue="true" notnull="true"/>
+        </addColumn>
+    </changeSet>
+    <changeSet type="pendingDrops">
+        <dropColumn columnName="item_spread" tableName="treasure_chests"/>
+    </changeSet>
+</migration>

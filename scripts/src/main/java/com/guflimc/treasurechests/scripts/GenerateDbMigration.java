@@ -10,7 +10,7 @@ public class GenerateDbMigration {
 
     public static void main(String[] args) throws IOException {
         DatabaseContext context = new DatabaseContext();
-        MigrationTool tool = new MigrationTool(context, "app/src/main/resources",
+        MigrationTool tool = new MigrationTool(context, "spigot/src/main/resources",
                 Platform.H2, Platform.MYSQL);
         tool.generate();
     }
