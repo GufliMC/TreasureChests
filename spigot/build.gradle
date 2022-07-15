@@ -45,6 +45,13 @@ bukkit {
     author = 'GufliMC'
     website = 'https://github.com/GufliMC/TreasureChests'
     apiVersion = '1.16'
+    
+    permissions {
+        'treasurechests.setup' {
+            description = 'Allows setting up a new treasure chest'
+            setDefault('OP')
+        }
+    }
 }
 
 // I want it nice like that
