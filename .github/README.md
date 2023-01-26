@@ -10,7 +10,7 @@ Note: Java 17 is required
 
 ## Usage
 
-Shift + Left-click on a chest or shulker box. You need the `treasurechests.setup` permission.
+Shift + Right-click on a chest or shulker box. You need the `treasurechests.setup` permission.
 A gui will open where you can configure the treasure chest.
 
 ### Modes
@@ -28,7 +28,7 @@ The chance is applied to each **item** in the **stack**, a stack of 40 with a ch
 
 ### Database
 
-Data is stored in a flatfile database by default. You can also use mysql by changing editing `config.json`:
+Data is stored in a flatfile database by default. You can also use mysql by editing `config.json`:
 
 ```json
 {
