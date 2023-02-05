@@ -29,6 +29,8 @@ dependencies {
 
     // gufli tools
     implementation 'com.guflimc.brick.gui:spigot-api:+'
+
+    // TODO deprecated: move to BrickORM
     implementation 'com.gufli.dbeantools:spigot-api:+'
     implementation 'com.gufli.dbeantools:adventure-api:+'
 
@@ -49,3 +51,4 @@ bukkit {
 
 // I want it nice like that
 generateBukkitPluginDescription.group = "minecraft"
+

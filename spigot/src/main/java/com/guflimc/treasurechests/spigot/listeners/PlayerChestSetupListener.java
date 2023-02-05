@@ -313,15 +313,19 @@ public class PlayerChestSetupListener implements Listener {
         menu.open(player);
     }
 
-    private final ItemStack min1 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGQyNDU0ZTRjNjdiMzIzZDViZTk1M2I1YjNkNTQxNzRhYTI3MTQ2MDM3NGVlMjg0MTBjNWFlYWUyYzExZjUifX19").build();
-    private final ItemStack min5 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGYzZjU2NWE4ODkyOGVlNWE5ZDY4NDNkOTgyZDc4ZWFlNmI0MWQ5MDc3ZjJhMWU1MjZhZjg2N2Q3OGZiIn19fQ==").build();
-    private final ItemStack min10 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjU5ODdmNDNmZjU3ZDRkYWJhYTJkMmNlYjlmMDFmYzZlZTQ2ZGIxNjJhNWUxMmRmZGJiNTdmZDQ2ODEzMmI4In19fQ==").build();
-    private final ItemStack minH = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGQ5ZTMzZDc0M2VlMzQyMjQzMzEyMjkxY2NkY2ZmZDdmY2NhNWJkYzhhNmE4NDU5ZWU4ZTYyY2U1N2FkZDcifX19").build();
+    private final ItemStack min1 = ItemStackBuilder.skull().withTexture("8d2454e4c67b323d5be953b5b3d54174aa271460374ee28410c5aeae2c11f5").build();
+    private final ItemStack min5 = ItemStackBuilder.skull().withTexture("df3f565a88928ee5a9d6843d982d78eae6b41d9077f2a1e526af867d78fb").build();
+    private final ItemStack min10 = ItemStackBuilder.skull().withTexture("f5987f43ff57d4dabaa2d2ceb9f01fc6ee46db162a5e12dfdbb57fd468132b8").build();
+    private final ItemStack minHour = ItemStackBuilder.skull().withTexture("4d9e33d743ee342243312291ccdcffd7fcca5bdc8a6a8459ee8e62ce57add7").build();
+    private final ItemStack minDay = ItemStackBuilder.skull().withTexture("ed68ae3150d81e4c0a9d172bd84c4ff73cdc0b87fee8ec661213468d544483").build();
+    private final ItemStack minMonth = ItemStackBuilder.skull().withTexture("116afb385724783947a6052ca2758f9c937cb8130c0eac1a3f068dc55495393").build();
 
-    private final ItemStack plus1 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzM0N2I3YTVhNmJiNjQxOWQzM2ViNDYxMDI2NTBjYzkxYmZkYzE1OWQ4ZmYxZjU1OTk2ZDRmMGFkNWJjNzU4In19fQ==").build();
-    private final ItemStack plus5 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmE2NzE0NGIzMjNhZDRkY2ViZmQxYzZhNjMwNzQzYzcwMmM0ZGE0NTUyMjg5YTkyNDIxZWFmYzRjMmQ0YjQzIn19fQ==").build();
-    private final ItemStack plus10 = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjFmODNkNmMxN2U0ZWZlODRlZGJhMzkxNzAzNzNkZjQ3NDgzNTRlYzNiMzM0MmU2YWEwYjRlZWE0YjYyMTkyIn19fQ==").build();
-    private final ItemStack plusH = ItemStackBuilder.skull().withSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDgyZDljZjg1NzdlYjBhM2QwMzFlZWMzNzBlODc5NjI5YjlhZjVhMmZjMjkyYjUyZDVmMmJmNzRiZjk0ZmY0MiJ9fX0=").build();
+    private final ItemStack plus1 = ItemStackBuilder.skull().withTexture("7347b7a5a6bb6419d33eb46102650cc91bfdc159d8ff1f55996d4f0ad5bc758").build();
+    private final ItemStack plus5 = ItemStackBuilder.skull().withTexture("2a67144b323ad4dcebfd1c6a630743c702c4da4552289a92421eafc4c2d4b43").build();
+    private final ItemStack plus10 = ItemStackBuilder.skull().withTexture("f1f83d6c17e4efe84edba39170373df4748354ec3b3342e6aa0b4eea4b62192").build();
+    private final ItemStack plusHour = ItemStackBuilder.skull().withTexture("d82d9cf8577eb0a3d031eec370e879629b9af5a2fc292b52d5f2bf74bf94ff42").build();
+    private final ItemStack plusDay = ItemStackBuilder.skull().withTexture("8081c171fb4675f9cbb6cfbc297947f14049a6588d2870796d90d5b02c0").build();
+    private final ItemStack plusMonth = ItemStackBuilder.skull().withTexture("4c1713d90ca5998716eaa7dd302f6c8d672595dcc6956c2e20e94184bae2").build();
 
     private void duration(Player player, BTreasureChest chest) {
         ISpigotMenu menu = SpigotBrickGUI.create(45, ChatColor.DARK_PURPLE + "Duration: " +
@@ -334,13 +338,17 @@ public class PlayerChestSetupListener implements Listener {
             return true;
         };
 
-        menu.setItem(12, ItemStackBuilder.of(min1).withName(ChatColor.GREEN + "-1 Minute").build(), callback.apply(-60));
-        menu.setItem(13, ItemStackBuilder.of(min10).withName(ChatColor.GREEN + "-10 Minutes").build(), callback.apply(-600));
-        menu.setItem(14, ItemStackBuilder.of(minH).withName(ChatColor.GREEN + "-1 Hour").build(), callback.apply(-3600));
+        menu.setItem(11, ItemStackBuilder.of(min1).withName(ChatColor.GREEN + "-1 Minute").build(), callback.apply(-60));
+        menu.setItem(12, ItemStackBuilder.of(min10).withName(ChatColor.GREEN + "-10 Minutes").build(), callback.apply(-600));
+        menu.setItem(13, ItemStackBuilder.of(minHour).withName(ChatColor.GREEN + "-1 Hour").build(), callback.apply(-3600));
+        menu.setItem(14, ItemStackBuilder.of(minDay).withName(ChatColor.GREEN + "-1 Day").build(), callback.apply(-86400));
+        menu.setItem(15, ItemStackBuilder.of(minMonth).withName(ChatColor.GREEN + "-1 Month").build(), callback.apply(-2592000));
 
-        menu.setItem(21, ItemStackBuilder.of(plus1).withName(ChatColor.GREEN + "+1 Minute").build(), callback.apply(60));
-        menu.setItem(22, ItemStackBuilder.of(plus10).withName(ChatColor.GREEN + "+10 Minutes").build(), callback.apply(600));
-        menu.setItem(23, ItemStackBuilder.of(plusH).withName(ChatColor.GREEN + "+1 Hour").build(), callback.apply(3600));
+        menu.setItem(20, ItemStackBuilder.of(plus1).withName(ChatColor.GREEN + "+1 Minute").build(), callback.apply(60));
+        menu.setItem(21, ItemStackBuilder.of(plus10).withName(ChatColor.GREEN + "+10 Minutes").build(), callback.apply(600));
+        menu.setItem(22, ItemStackBuilder.of(plusHour).withName(ChatColor.GREEN + "+1 Hour").build(), callback.apply(3600));
+        menu.setItem(23, ItemStackBuilder.of(plusDay).withName(ChatColor.GREEN + "+1 Day").build(), callback.apply(86400));
+        menu.setItem(24, ItemStackBuilder.of(plusMonth).withName(ChatColor.GREEN + "+1 Month").build(), callback.apply(2592000));
 
         menu.setItem(40, back, (event) -> {
             info(player, chest);
@@ -380,9 +388,21 @@ public class PlayerChestSetupListener implements Listener {
 
     private String format(int seconds) {
         String str = "";
+        int months = seconds / 2592000;
+        if ( months > 0 ) {
+            str += months + "M ";
+            seconds -= months * 2592000;
+        }
+
+        int days = seconds / 86400;
+        if (days > 0) {
+            str += days + "D ";
+            seconds -= days * 86400;
+        }
+
         int hours = seconds / 3600;
         if (hours > 0) {
-            str = hours + "h ";
+            str += hours + "h ";
             seconds -= hours * 3600;
         }
 
