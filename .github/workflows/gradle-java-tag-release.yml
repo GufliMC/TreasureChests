@@ -14,4 +14,4 @@ jobs:
     uses: GufliOfficial/.github/.github/workflows/java-gradle-github-release.yml@main
     with:
       files: |
-        spigot/build/libs/*.jar
+        spigot/build/libs/TreasureChests-*.jar
