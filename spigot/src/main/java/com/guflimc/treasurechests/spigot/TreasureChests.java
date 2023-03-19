@@ -27,20 +27,8 @@ public class TreasureChests extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        saveResource("config.json", false);
-
         // LOAD CONFIG
-        TreasureChestsConfig config;
-        try (
-                InputStream is = getResource("config.json");
-                InputStreamReader isr = new InputStreamReader(is)
-        ) {
-            config = gson.fromJson(isr, TreasureChestsConfig.class);
-        } catch (IOException e) {
-            getLogger().severe("Cannot load configuration.");
-            e.printStackTrace();
-            return;
-        }
+        TreasureChestsConfig config = new TreasureChestsConfig();
 
         // INIT DATABASE
         databaseContext = new DatabaseContext();

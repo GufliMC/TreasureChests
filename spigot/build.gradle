@@ -16,12 +16,13 @@ dependencies {
 
     // provided at runtime
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-    compileOnly 'com.google.code.gson:gson:2.+'
+//    compileOnly 'com.google.code.gson:gson:2.+'
 
     // shadow - ebean does not work well with spigot libraries
     implementation 'io.ebean:ebean-core:13.+'
     implementation 'io.ebean:ebean-querybean:13.+'
     implementation 'io.ebean:ebean-datasource:8.+'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
 
     // h2 platform + driver
     implementation 'io.ebean:ebean-platform-h2:13.+'
