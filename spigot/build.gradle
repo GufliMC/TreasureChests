@@ -3,12 +3,12 @@ plugins {
     id 'net.minecrell.plugin-yml.bukkit' version '0.5.1'
 }
 
-configurations {
-    rootImplementation {
-        transitive false
-    }
-    implementation.extendsFrom rootImplementation
-}
+//configurations {
+//    rootImplementation {
+//        transitive false
+//    }
+//    implementation.extendsFrom rootImplementation
+//}
 
 dependencies {
     // required for build process
@@ -16,29 +16,23 @@ dependencies {
 
     // provided at runtime
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
-//    compileOnly 'com.google.code.gson:gson:2.+'
-
-    // shadow - ebean does not work well with spigot libraries
-    implementation 'io.ebean:ebean-core:13.+'
-    implementation 'io.ebean:ebean-querybean:13.+'
-    implementation 'io.ebean:ebean-datasource:8.+'
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
-
-    // h2 platform + driver
-    implementation 'io.ebean:ebean-platform-h2:13.+'
-    implementation 'com.h2database:h2:2.+'
 
     // gufli tools
     implementation 'com.guflimc.brick.gui:spigot-api:+'
-
-    // TODO deprecated: move to BrickORM
-    implementation 'com.gufli.dbeantools:spigot-api:+'
-    implementation 'com.gufli.dbeantools:adventure-api:+'
+    implementation 'com.guflimc.brick.orm:ebean:+'
+    implementation('com.guflimc.brick.orm:jpa-converters:+') {
+        exclude group: 'jakarta.persistence'
+    }
 
     // adventure
     implementation 'net.kyori:adventure-api:4.+'
     implementation 'net.kyori:adventure-platform-bukkit:4.+'
     implementation 'net.kyori:adventure-text-minimessage:4.+'
+
+    // uncomment when generating migrations
+//    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+//    implementation 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
+//    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 }
 
 bukkit {

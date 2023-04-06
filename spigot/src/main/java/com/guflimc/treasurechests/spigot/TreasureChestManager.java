@@ -2,8 +2,6 @@ package com.guflimc.treasurechests.spigot;
 
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.data.beans.*;
-import com.guflimc.treasurechests.spigot.data.beans.query.QBTreasureChest;
-import com.guflimc.treasurechests.spigot.data.beans.query.QBTreasureChestInventory;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -46,16 +44,15 @@ public class TreasureChestManager {
         shutdown();
 
         // load chests
-        chests.addAll(new QBTreasureChest().findSet());
+        chests.addAll(databaseContext.findAllAsync(BTreasureChest.class).join());
 
         // load players
         Bukkit.getOnlinePlayers().forEach(this::load);
     }
 
     public void load(Player player) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            inventories.addAll(new QBTreasureChestInventory().playerId.eq(player.getUniqueId()).findSet());
-        });
+        databaseContext.findAllWhereAsync(BTreasureChestInventory.class, "playerId", player.getUniqueId())
+                        .thenAccept(inventories::addAll);
     }
 
     public void unload(Player player) {
@@ -90,7 +87,7 @@ public class TreasureChestManager {
         BTreasureChestInventory tci = inventories.stream()
                 .filter(inv -> inv.chest().equals(chest))
                 .filter(inv -> inv.chest().mode() == ChestMode.SERVER_BOUND || inv.playerId().equals(player.getUniqueId()))
-                .filter(inv -> inv.createdAt().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
+                .filter(inv -> chest.respawnTime() <= 0 || inv.createdAt().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
                 .max(Comparator.comparing(BTreasureChestInventory::createdAt))
                 .orElse(null);
 
@@ -190,7 +187,7 @@ public class TreasureChestManager {
     // DATABASE
 
     public CompletableFuture<Void> save(BModel... models) {
-        return databaseContext.saveAsync(models);
+        return databaseContext.persistAsync(models);
     }
 
     public CompletableFuture<Void> delete(BModel... models) {
@@ -204,7 +201,7 @@ public class TreasureChestManager {
             }
         }
 
-        return databaseContext.deleteAsync(models);
+        return databaseContext.removeAsync(models);
     }
 
     // chests
@@ -244,7 +241,7 @@ public class TreasureChestManager {
 
     public CompletableFuture<BTreasureChest> addChest(Location location) {
         BTreasureChest chest = new BTreasureChest(location);
-        return databaseContext.saveAsync(chest).thenCompose((v) -> {
+        return databaseContext.persistAsync(chest).thenCompose((v) -> {
             chests.add(chest);
             CompletableFuture<BTreasureChest> cf = new CompletableFuture<>();
             plugin.getServer().getScheduler().runTask(plugin, () -> cf.complete(chest));

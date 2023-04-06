@@ -1,7 +1,8 @@
 package com.guflimc.treasurechests.spigot.data.beans;
 
-import com.gufli.dbeantools.adventure.converters.ComponentConverter;
+import com.guflimc.brick.orm.jpa.converters.ComponentConverter;
 import com.guflimc.treasurechests.spigot.data.converters.LocationConverter;
+import com.guflimc.treasurechests.spigot.data.converters.ParticleEffectConverter;
 import io.ebean.annotation.DbDefault;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
@@ -41,6 +42,10 @@ public class BTreasureChest extends BModel {
     @Column(length = 4096)
     @Convert(converter = ComponentConverter.class, attributeName = "title")
     private Component title;
+
+    @Column(length = 1024)
+    @Convert(converter = ParticleEffectConverter.class)
+    private ParticleEffect particleEffect;
 
     public BTreasureChest(Location location) {
         this.location = location;
@@ -106,5 +111,13 @@ public class BTreasureChest extends BModel {
 
     public void setTitle(Component title) {
         this.title = title;
+    }
+
+    public void setParticleEffect(ParticleEffect particleEffect) {
+        this.particleEffect = particleEffect;
+    }
+
+    public ParticleEffect particleEffect() {
+        return particleEffect;
     }
 }

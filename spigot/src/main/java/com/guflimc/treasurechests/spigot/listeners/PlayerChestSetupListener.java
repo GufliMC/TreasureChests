@@ -3,16 +3,21 @@ package com.guflimc.treasurechests.spigot.listeners;
 import com.guflimc.brick.gui.spigot.SpigotBrickGUI;
 import com.guflimc.brick.gui.spigot.api.ISpigotMenu;
 import com.guflimc.brick.gui.spigot.item.ItemStackBuilder;
+import com.guflimc.brick.gui.spigot.menu.SpigotMenu;
+import com.guflimc.brick.gui.spigot.menu.SpigotMenuItem;
 import com.guflimc.treasurechests.spigot.TreasureChestManager;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureChest;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureLoot;
 import com.guflimc.treasurechests.spigot.data.beans.ChestMode;
+import com.guflimc.treasurechests.spigot.data.beans.ParticleEffect;
+import com.guflimc.treasurechests.spigot.particle.ParticleJobManager;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,6 +30,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -34,30 +40,33 @@ import java.util.function.Function;
 public class PlayerChestSetupListener implements Listener {
 
     private final TreasureChestManager manager;
+    private final ParticleJobManager particleJobManager;
 
     private final Map<Player, BTreasureChest> changeTitleSession = new HashMap<>();
+    private final Map<Player, BTreasureChest> clipboard = new HashMap<>();
 
-    public PlayerChestSetupListener(TreasureChestManager manager) {
+    public PlayerChestSetupListener(TreasureChestManager manager, ParticleJobManager particleJobManager) {
         this.manager = manager;
+        this.particleJobManager = particleJobManager;
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onBreak(BlockBreakEvent event) {
-        if ( !manager.isTreasureChestType(event.getBlock().getType()) ) {
+        if (!manager.isTreasureChestType(event.getBlock().getType())) {
             return;
         }
 
         BTreasureChest chest = manager.chestAt(event.getBlock());
-        if (chest == null ) {
+        if (chest == null) {
             return;
         }
 
-        if ( !event.getPlayer().isSneaking() || !event.getPlayer().hasPermission("treasurechests.setup")) {
+        if (!event.getPlayer().isSneaking() || !event.getPlayer().hasPermission("treasurechests.setup")) {
             event.setCancelled(true);
             return;
         }
 
-        if ( event.getBlock().getLocation().equals(chest.location()) ) {
+        if (event.getBlock().getLocation().equals(chest.location())) {
             manager.delete(chest);
         }
     }
@@ -97,13 +106,14 @@ public class PlayerChestSetupListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         changeTitleSession.remove(event.getPlayer());
+        clipboard.remove(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChat(AsyncPlayerChatEvent event) {
         Player player = event.getPlayer();
         BTreasureChest chest = changeTitleSession.get(player);
-        if ( chest == null ) {
+        if (chest == null) {
             return;
         }
 
@@ -111,7 +121,7 @@ public class PlayerChestSetupListener implements Listener {
         changeTitleSession.remove(player);
 
         Bukkit.getScheduler().runTask(manager.plugin, () -> {
-            if ( event.getMessage().equalsIgnoreCase("cancel") ) {
+            if (event.getMessage().equalsIgnoreCase("cancel")) {
                 info(player, chest);
                 return;
             }
@@ -140,21 +150,44 @@ public class PlayerChestSetupListener implements Listener {
     }
 
     private void info(Player player, BTreasureChest chest) {
+        ISpigotMenu menu = SpigotBrickGUI.create(54, ChatColor.DARK_PURPLE + "Treasure Chest Info");
+
+        // INSPECT
         ItemStack inspect = ItemStackBuilder.of(Material.GOLD_INGOT)
-                .withName(ChatColor.GOLD + "Inspect loot")
+                .withName(ChatColor.YELLOW + "Inspect loot")
                 .withLore(
                         "",
                         ChatColor.GRAY + "Left click to delete."
                 ).build();
+        menu.setItem(11, inspect, (event) -> {
+            loot(player, chest);
+            return true;
+        });
 
+        // DURATION
         ItemStack duration = ItemStackBuilder.of(Material.CLOCK)
-                .withName(ChatColor.BLUE + "Respawn Duration")
+                .withName(ChatColor.YELLOW + "Respawn Duration")
                 .withLore(
-                        ChatColor.GRAY + "Duration: " + ChatColor.GOLD + format(chest.respawnTime()),
+                        ChatColor.GRAY + "Duration: " +
+                                (chest.respawnTime() == 0 ? ChatColor.RED + "DISABLED" :
+                                        ChatColor.GOLD + format(chest.respawnTime())),
                         "",
-                        ChatColor.GRAY + "Left click to change."
+                        ChatColor.GRAY + "Left click to change.",
+                        ChatColor.GRAY + "Right click to disable."
                 ).build();
+        menu.setItem(13, duration, (event) -> {
+            if (event.isRightClick()) {
+                chest.setRespawnTime(0);
+                manager.save(chest);
+                info(player, chest);
+                return true;
+            }
 
+            duration(player, chest);
+            return true;
+        });
+
+        // MODE
         ItemStack mode = ItemStackBuilder.of(Material.FLOWER_POT)
                 .withName(ChatColor.YELLOW + "Chest Mode")
                 .withLore(
@@ -162,7 +195,19 @@ public class PlayerChestSetupListener implements Listener {
                         "",
                         ChatColor.GRAY + "Left click to cycle."
                 ).build();
+        menu.setItem(15, mode, (event) -> {
+            int ordinal = chest.mode().ordinal() + 1;
+            if (ordinal >= ChestMode.values().length) {
+                ordinal = 0;
+            }
 
+            chest.setChestMode(ChestMode.values()[ordinal]);
+            manager.save(chest);
+            info(player, chest);
+            return true;
+        });
+
+        // SPLIT STACKS
         ItemStack splitStacks = ItemStackBuilder.of(Material.HOPPER)
                 .withName(ChatColor.YELLOW + "Split Stacks")
                 .withLore(
@@ -170,7 +215,14 @@ public class PlayerChestSetupListener implements Listener {
                         "",
                         ChatColor.GRAY + "Left click to toggle."
                 ).build();
+        menu.setItem(20, splitStacks, (event) -> {
+            chest.setSplitStacks(!chest.splitStacks());
+            manager.save(chest);
+            info(player, chest);
+            return true;
+        });
 
+        // TITLE
         ItemStack title = ItemStackBuilder.of(Material.NAME_TAG)
                 .withName(ChatColor.YELLOW + "Title")
                 .withLore(
@@ -178,53 +230,64 @@ public class PlayerChestSetupListener implements Listener {
                         "",
                         ChatColor.GRAY + "Left click to change."
                 ).build();
+        menu.setItem(22, title, (event) -> {
+            changeTitleSession.put(player, chest);
+            player.closeInventory();
+            player.sendMessage(ChatColor.GREEN + "Enter a new title in the chat or type 'cancel' to abort.");
+            return true;
+        });
 
+        // PARTICLES
+        ItemStack particles = ItemStackBuilder.of(Material.BLAZE_POWDER)
+                .withName(ChatColor.YELLOW + "Particle effects")
+                .withLore(
+                        "",
+                        ChatColor.GRAY + "Left click to change particle effects.")
+                .build();
+        menu.setItem(24, particles, (event) -> {
+            particles(player, chest);
+            return true;
+        });
+
+        // COPY
+        ItemStack copy = ItemStackBuilder.of(Material.ENDER_PEARL)
+                .withName(ChatColor.GREEN + "Copy chest settings")
+                .withLore(
+                        "",
+                        ChatColor.GRAY + "Left click to copy.")
+                .build();
+        menu.setItem(38, copy, (event) -> {
+            clipboard.put(player, chest);
+            return true;
+        });
+
+        // PASTE
+        if (clipboard.containsKey(player) && !clipboard.get(player).equals(chest)) {
+            ItemStack paste = ItemStackBuilder.of(Material.SLIME_BALL)
+                    .withName(ChatColor.GREEN + "Paste chest settings")
+                    .withLore(
+                            "",
+                            ChatColor.GRAY + "Left click to paste.")
+                    .build();
+            menu.setItem(39, paste, (event) -> {
+                paste(player, chest);
+                return true;
+            });
+        }
+
+        // DELETE
         ItemStack delete = ItemStackBuilder.of(Material.LAVA_BUCKET)
                 .withName(ChatColor.RED + "Delete chest")
                 .withLore(
                         "",
                         ChatColor.GRAY + "Left click to delete.")
                 .build();
+        menu.setItem(42, delete, (event) -> {
+            delete(player, chest);
+            return true;
+        });
 
-        SpigotBrickGUI.builder()
-                .withTitle(ChatColor.DARK_PURPLE + "Treasure Chest Info")
-                .withItem(inspect, (event) -> {
-                    loot(player, chest);
-                    return true;
-                })
-                .withItem(duration, (event) -> {
-                    duration(player, chest);
-                    return true;
-                })
-                .withItem(mode, (event) -> {
-                    int ordinal = chest.mode().ordinal() + 1;
-                    if ( ordinal >= ChestMode.values().length ) {
-                        ordinal = 0;
-                    }
-
-                    chest.setChestMode(ChestMode.values()[ordinal]);
-                    manager.save(chest);
-                    info(player, chest);
-                    return true;
-                })
-                .withItem(splitStacks, (event) -> {
-                    chest.setSplitStacks(!chest.splitStacks());
-                    manager.save(chest);
-                    info(player, chest);
-                    return true;
-                })
-                .withItem(title, (event) -> {
-                    changeTitleSession.put(player, chest);
-                    player.closeInventory();
-                    player.sendMessage(ChatColor.GREEN + "Enter a new title in the chat or type 'cancel' to abort.");
-                    return true;
-                })
-                .withItem(delete, (event) -> {
-                    delete(player, chest);
-                    return true;
-                })
-                .build()
-                .open(player);
+        menu.open(player);
     }
 
     private void delete(Player player, BTreasureChest chest) {
@@ -232,11 +295,42 @@ public class PlayerChestSetupListener implements Listener {
         ItemStack cancel = ItemStackBuilder.of(Material.RED_TERRACOTTA).withName(ChatColor.RED + "Cancel").build();
 
         SpigotBrickGUI.builder()
-                .withTitle(ChatColor.DARK_PURPLE + "Delete Treasure Chest")
+                .withTitle(ChatColor.DARK_PURPLE + "Delete treasure chest")
                 .withItem(confirm, (event) -> {
                     manager.delete(chest);
                     player.sendMessage(ChatColor.GREEN + "Treasure chest deleted.");
                     player.closeInventory();
+                    return true;
+                })
+                .withItem(cancel, (event) -> {
+                    info(player, chest);
+                    return true;
+                })
+                .build().open(player);
+    }
+
+    private void paste(Player player, BTreasureChest chest) {
+        ItemStack confirm = ItemStackBuilder.of(Material.LIME_TERRACOTTA).withName(ChatColor.GREEN + "Confirm")
+                .withLore("", ChatColor.GRAY + "This will override all current settings.").build();
+        ItemStack cancel = ItemStackBuilder.of(Material.RED_TERRACOTTA).withName(ChatColor.RED + "Cancel").build();
+
+        SpigotBrickGUI.builder()
+                .withTitle(ChatColor.DARK_PURPLE + "Paste treasure chest")
+                .withItem(confirm, (event) -> {
+                    // copy all values
+                    BTreasureChest clip = clipboard.get(player);
+                    chest.setChestMode(clip.mode());
+                    chest.setRespawnTime(clip.respawnTime());
+                    chest.setSplitStacks(clip.splitStacks());
+                    chest.setTitle(clip.title());
+                    chest.setParticleEffect(clip.particleEffect());
+                    chest.loot().forEach(chest::removeLoot);
+                    clip.loot().forEach(l -> {
+                        BTreasureLoot loot = chest.addLoot(l.item());
+                        loot.setChance(l.chance());
+                    });
+
+                    info(player, chest);
                     return true;
                 })
                 .withItem(cancel, (event) -> {
@@ -252,7 +346,7 @@ public class PlayerChestSetupListener implements Listener {
         int size = manager.isDoubleChest(chest.location()) ? 54 : 36;
 
         // remove excess loot
-        if ( chest.loot().size() > size ) {
+        if (chest.loot().size() > size) {
             manager.delete(chest.loot().subList(size, chest.loot().size()).toArray(BTreasureLoot[]::new));
             manager.save(chest);
         }
@@ -273,7 +367,7 @@ public class PlayerChestSetupListener implements Listener {
                     manager.delete(loot);
                     loot(player, chest);
                     return true;
-                } else if ( event.getClick() == ClickType.LEFT) {
+                } else if (event.getClick() == ClickType.LEFT) {
                     dropchance(player, loot);
                     return true;
                 }
@@ -389,7 +483,7 @@ public class PlayerChestSetupListener implements Listener {
     private String format(int seconds) {
         String str = "";
         int months = seconds / 2592000;
-        if ( months > 0 ) {
+        if (months > 0) {
             str += months + "M ";
             seconds -= months * 2592000;
         }
@@ -416,6 +510,44 @@ public class PlayerChestSetupListener implements Listener {
             str += seconds + "s";
         }
         return str;
+    }
+
+    private void particles(Player player, BTreasureChest chest) {
+        SpigotBrickGUI.paginatedBuilder().withTitle(ChatColor.DARK_PURPLE + "Particles")
+                .withHotbarItem(4, back, (event) -> {
+                    info(player, chest);
+                    return true;
+                })
+                .withItems(ParticleEffect.ParticleType.values().length, index -> {
+                    ParticleEffect.ParticleType type = ParticleEffect.ParticleType.values()[index];
+                    ItemStackBuilder b = ItemStackBuilder.of(type.material());
+
+                    if (chest.particleEffect() != null && chest.particleEffect().type() == type) {
+                        b
+                                .withName(ChatColor.GREEN + type.display() + ChatColor.GRAY + " (Selected)")
+                                .withEnchantment(Enchantment.SILK_TOUCH, 1)
+                                .withItemFlag(ItemFlag.HIDE_ENCHANTS)
+                                .build();
+                    } else {
+                        b.withName(ChatColor.YELLOW + type.display());
+                    }
+
+                    return new SpigotMenuItem(b.build(), SpigotMenu.soundWrapper((event) -> {
+                        ParticleEffect effect;
+                        if (chest.particleEffect() != null) {
+                            effect = new ParticleEffect(type, chest.particleEffect().pattern());
+                        } else {
+                            effect = new ParticleEffect(type, ParticleEffect.ParticlePattern.RANDOM);
+                        }
+                        chest.setParticleEffect(effect);
+                        particleJobManager.start(chest);
+                        manager.save(chest);
+                        particles(player, chest);
+                        return true;
+                    }));
+                })
+                .build()
+                .open(player);
     }
 
 }

@@ -1,13 +1,14 @@
 package com.guflimc.treasurechests.spigot;
 
-import com.gufli.dbeantools.api.DatabaseConfig;
+import com.guflimc.brick.orm.ebean.database.EbeanConfig;
 
 public class TreasureChestsConfig {
 
-    public DatabaseConfig database = new DatabaseConfig();
+    public EbeanConfig database = new EbeanConfig();
 
     public TreasureChestsConfig() {
         database.dsn = "jdbc:h2:file:./plugins/TreasureChests/data/database.h2";
+        database.driver = "org.h2.Driver";
         database.username = "dbuser";
         database.password = "dbuser";
     }

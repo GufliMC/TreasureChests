@@ -1,27 +1,20 @@
 package com.guflimc.treasurechests.spigot;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.guflimc.brick.gui.spigot.SpigotBrickGUI;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.listeners.PlayerChestListener;
 import com.guflimc.treasurechests.spigot.listeners.PlayerChestSetupListener;
 import com.guflimc.treasurechests.spigot.listeners.PlayerConnectionListener;
+import com.guflimc.treasurechests.spigot.listeners.WorldListener;
+import com.guflimc.treasurechests.spigot.particle.ParticleJobManager;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 public class TreasureChests extends JavaPlugin {
 
-    private static final Gson gson = new Gson();
-
     private DatabaseContext databaseContext;
-    private TreasureChestManager treasureChestManager;
+    private TreasureChestManager manager;
+    private ParticleJobManager particleJobManager;
 
     //
 
@@ -31,28 +24,23 @@ public class TreasureChests extends JavaPlugin {
         TreasureChestsConfig config = new TreasureChestsConfig();
 
         // INIT DATABASE
-        databaseContext = new DatabaseContext();
-        try {
-            databaseContext.withContextClassLoader(() -> {
-                databaseContext.init(config.database);
-                databaseContext.migrate();
+        databaseContext = new DatabaseContext(config.database);
 
-                treasureChestManager = new TreasureChestManager(this, databaseContext);
-                return null;
-            });
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return;
-        }
+        // manager
+        manager = new TreasureChestManager(this, databaseContext);
+
+        // particle
+        particleJobManager = new ParticleJobManager(this, manager);
 
         // init guis
         SpigotBrickGUI.register(this);
 
         // events
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerConnectionListener(treasureChestManager), this);
-        pm.registerEvents(new PlayerChestListener(treasureChestManager), this);
-        pm.registerEvents(new PlayerChestSetupListener(treasureChestManager), this);
+        pm.registerEvents(new PlayerConnectionListener(manager), this);
+        pm.registerEvents(new PlayerChestListener(manager), this);
+        pm.registerEvents(new PlayerChestSetupListener(manager, particleJobManager), this);
+        pm.registerEvents(new WorldListener(particleJobManager), this);
 
         getLogger().info("Enabled " + nameAndVersion() + ".");
     }
@@ -62,6 +50,14 @@ public class TreasureChests extends JavaPlugin {
         // DATABASE
         if (databaseContext != null) {
             databaseContext.shutdown();
+        }
+
+        if (manager != null) {
+            manager.shutdown();
+        }
+
+        if ( particleJobManager != null ) {
+            particleJobManager.shutdown();
         }
 
         getLogger().info("Disabled " + nameAndVersion() + ".");
