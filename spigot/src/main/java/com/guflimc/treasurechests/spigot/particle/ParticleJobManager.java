@@ -5,15 +5,15 @@ import com.guflimc.treasurechests.spigot.TreasureChests;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureChest;
 import org.bukkit.Chunk;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ParticleJobManager {
 
     private final TreasureChests plugin;
     private final TreasureChestManager manager;
-    private final Map<BTreasureChest, AbstractParticleJob> jobs = new HashMap<>();
+    private final Map<BTreasureChest, AbstractParticleJob> jobs = new ConcurrentHashMap<>();
 
     public ParticleJobManager(TreasureChests plugin, TreasureChestManager manager) {
         this.plugin = plugin;
@@ -28,10 +28,7 @@ public class ParticleJobManager {
     public void start(BTreasureChest chest) {
         stop(chest);
 
-        if ( chest.particleEffect() == null ) {
-            return;
-        }
-        if ( jobs.containsKey(chest) ) {
+        if ( chest.particleEffect() == null || jobs.containsKey(chest) ) {
             return;
         }
 
@@ -43,7 +40,9 @@ public class ParticleJobManager {
 
     public void start(Chunk chunk) {
         manager.chests().stream()
-                .filter(chest -> chest.location().getChunk().equals(chunk))
+                .filter(chest -> chunk.getWorld().equals(chest.location().getWorld()))
+                .filter(chest -> chunk.getX() == chest.location().getBlockX() >> 4)
+                .filter(chest -> chunk.getZ() == chest.location().getBlockZ() >> 4)
                 .forEach(this::start);
     }
 
@@ -56,7 +55,9 @@ public class ParticleJobManager {
 
     public void stop(Chunk chunk) {
         new HashSet<>(jobs.keySet()).stream()
-                .filter(chest -> chest.location().getChunk().equals(chunk))
-                .forEach(chest -> jobs.remove(chest).stop());
+                .filter(chest -> chunk.getWorld().equals(chest.location().getWorld()))
+                .filter(chest -> chunk.getX() == chest.location().getBlockX() >> 4)
+                .filter(chest -> chunk.getZ() == chest.location().getBlockZ() >> 4)
+                .forEach(this::stop);
     }
 }

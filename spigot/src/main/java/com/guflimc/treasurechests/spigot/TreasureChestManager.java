@@ -52,7 +52,7 @@ public class TreasureChestManager {
 
     public void load(Player player) {
         databaseContext.findAllWhereAsync(BTreasureChestInventory.class, "playerId", player.getUniqueId())
-                        .thenAccept(inventories::addAll);
+                .thenAccept(inventories::addAll);
     }
 
     public void unload(Player player) {
@@ -70,6 +70,11 @@ public class TreasureChestManager {
 
         tci.setInventory(inventory);
         save(tci);
+    }
+
+    public void refill(BTreasureChest chest) {
+        inventories.removeIf(inv -> inv.chest().equals(chest));
+
     }
 
     //
@@ -124,7 +129,7 @@ public class TreasureChestManager {
         Inventory inv = Bukkit.createInventory(null, size, title);
 
         // fill chess with spread
-        if ( chest.splitStacks() ) {
+        if (chest.splitStacks()) {
             spread(items, inv.getSize());
         }
 

@@ -15,10 +15,10 @@ public record ParticleEffect(ParticleType type, ParticlePattern pattern) {
     // TYPES
 
     public enum ParticleType {
-        ENDER("Ender", Material.ENDER_EYE, Particle.PORTAL),
-        ENCHANT("Enchantment", Material.ENCHANTED_BOOK, Particle.ENCHANTMENT_TABLE),
-        NOTE("Music", Material.MUSIC_DISC_STAL, Particle.NOTE),
-        HEART("Love", Material.APPLE, Particle.HEART),
+//        ENDER("Ender", Material.ENDER_EYE, Particle.PORTAL),
+//        ENCHANT("Enchantment", Material.ENCHANTED_BOOK, Particle.ENCHANTMENT_TABLE),
+//        NOTE("Music", Material.MUSIC_DISC_STAL, Particle.NOTE),
+//        HEART("Love", Material.APPLE, Particle.HEART),
         DUST_BLACK("Black dust", Material.BLACK_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(1908001), 1)),
         DUST_RED("Red dust", Material.RED_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(11546150), 1)),
         DUST_GREEN("Green dust", Material.GREEN_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(6192150), 1)),
@@ -35,7 +35,6 @@ public record ParticleEffect(ParticleType type, ParticlePattern pattern) {
         DUST_MAGENTA("Magenta dust", Material.MAGENTA_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(13061821), 1)),
         DUST_ORANGE("Orange dust", Material.ORANGE_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(16351261), 1)),
         DUST_WHITE("White dust", Material.WHITE_DYE, Particle.REDSTONE, new Particle.DustOptions(Color.fromRGB(16383998), 1)),
-
         ;
         private final String display;
         private final Material material;

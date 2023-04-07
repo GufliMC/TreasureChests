@@ -67,6 +67,7 @@ public class PlayerChestSetupListener implements Listener {
         }
 
         if (event.getBlock().getLocation().equals(chest.location())) {
+            particleJobManager.stop(chest);
             manager.delete(chest);
         }
     }
@@ -275,6 +276,19 @@ public class PlayerChestSetupListener implements Listener {
             });
         }
 
+//        // FORCE REFILL
+//        ItemStack refill = ItemStackBuilder.of(Material.COOKIE)
+//                .withName(ChatColor.GOLD + "Force Refill")
+//                .withLore(
+//                        "",
+//                        ChatColor.GRAY + "Left click to refill all inventories.")
+//                .build();
+//        menu.setItem(40, refill, (event) -> {
+//
+//            return true;
+//        });
+        // TODO
+
         // DELETE
         ItemStack delete = ItemStackBuilder.of(Material.LAVA_BUCKET)
                 .withName(ChatColor.RED + "Delete chest")
@@ -297,6 +311,7 @@ public class PlayerChestSetupListener implements Listener {
         SpigotBrickGUI.builder()
                 .withTitle(ChatColor.DARK_PURPLE + "Delete treasure chest")
                 .withItem(confirm, (event) -> {
+                    particleJobManager.stop(chest);
                     manager.delete(chest);
                     player.sendMessage(ChatColor.GREEN + "Treasure chest deleted.");
                     player.closeInventory();
