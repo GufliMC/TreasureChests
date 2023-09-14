@@ -6,7 +6,7 @@ import io.ebean.annotation.DbDefault;
 import io.ebean.annotation.DbForeignKey;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -19,6 +19,7 @@ public class BTreasureLoot extends BModel {
     @ManyToOne(targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
     @Column(nullable = false)
+    @JoinColumn(name = "chest_id")
     public final BTreasureChest chest;
 
     @Convert(converter = ItemStackConverter.class)

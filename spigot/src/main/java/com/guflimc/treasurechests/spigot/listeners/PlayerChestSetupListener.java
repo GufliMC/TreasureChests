@@ -344,6 +344,7 @@ public class PlayerChestSetupListener implements Listener {
                         BTreasureLoot loot = chest.addLoot(l.item());
                         loot.setChance(l.chance());
                     });
+                    manager.save(chest);
 
                     info(player, chest);
                     return true;

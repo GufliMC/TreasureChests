@@ -3,8 +3,8 @@ package com.guflimc.treasurechests.spigot.data.converters;
 import com.guflimc.treasurechests.spigot.util.BukkitSerializer;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.io.IOException;
 
 @Converter(autoApply = true)

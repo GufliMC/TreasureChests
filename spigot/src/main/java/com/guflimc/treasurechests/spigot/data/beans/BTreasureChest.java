@@ -8,7 +8,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,7 +26,7 @@ public class BTreasureChest extends BModel {
     @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest")
     private List<BTreasureLoot> loot;
 
-    @Column(nullable = false)
+    @Column(name = "respawn_time", nullable = false)
     @DbDefault("3600")
     private int respawnTime = 3600;
 
@@ -35,7 +35,7 @@ public class BTreasureChest extends BModel {
     @DbDefault("PLAYER_BOUND")
     private ChestMode mode = ChestMode.PLAYER_BOUND;
 
-    @Column(nullable = false)
+    @Column(name = "split_stacks", nullable = false)
     @DbDefault("true")
     private boolean splitStacks = true;
 
@@ -43,7 +43,7 @@ public class BTreasureChest extends BModel {
     @Convert(converter = ComponentConverter.class, attributeName = "title")
     private Component title;
 
-    @Column(length = 1024)
+    @Column(name = "particle_effect", length = 1024)
     @Convert(converter = ParticleEffectConverter.class)
     private ParticleEffect particleEffect;
 

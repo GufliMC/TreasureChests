@@ -4,7 +4,7 @@ import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import io.ebean.Model;
 import io.ebean.annotation.DbName;
 
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.MappedSuperclass;
 
 @DbName(DatabaseContext.DATASOURCE_NAME)
 @MappedSuperclass

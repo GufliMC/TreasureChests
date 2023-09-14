@@ -3,7 +3,9 @@ package com.guflimc.treasurechests.spigot;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.data.beans.*;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -125,7 +127,7 @@ public class TreasureChestManager {
 
         // get size of chest
         int size = isDoubleChest(block) ? 54 : 27;
-        String title = BukkitComponentSerializer.legacy().serialize(chest.title());
+        String title = ChatColor.translateAlternateColorCodes('&', BukkitComponentSerializer.legacy().serialize(chest.title()));
         Inventory inv = Bukkit.createInventory(null, size, title);
 
         // fill chess with spread
@@ -192,7 +194,7 @@ public class TreasureChestManager {
     // DATABASE
 
     public CompletableFuture<Void> save(BModel... models) {
-        return databaseContext.persistAsync(models);
+        return databaseContext.persistAsync((Object[]) models);
     }
 
     public CompletableFuture<Void> delete(BModel... models) {
@@ -206,7 +208,7 @@ public class TreasureChestManager {
             }
         }
 
-        return databaseContext.removeAsync(models);
+        return databaseContext.removeAsync((Object[]) models);
     }
 
     // chests

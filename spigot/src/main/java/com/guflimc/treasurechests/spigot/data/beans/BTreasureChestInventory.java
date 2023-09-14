@@ -9,7 +9,7 @@ import io.ebean.annotation.WhenCreated;
 import io.ebean.annotation.WhenModified;
 import org.bukkit.inventory.Inventory;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -20,12 +20,13 @@ public class BTreasureChestInventory extends BModel {
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(name = "player_id", nullable = false)
     private final UUID playerId;
 
     @ManyToOne(targetEntity = BTreasureChest.class)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
     @Column(nullable = false)
+    @JoinColumn(name = "chest_id")
     private final BTreasureChest chest;
 
     @Convert(converter = InventoryConverter.class)
@@ -33,9 +34,11 @@ public class BTreasureChestInventory extends BModel {
     private DatabaseWrapper<Inventory> inventory;
 
     @WhenCreated
+    @Column(name = "created_at")
     Instant createdAt;
 
     @WhenModified
+    @Column(name = "updated_at")
     Instant updatedAt;
 
     public BTreasureChestInventory(UUID playerId, BTreasureChest chest, Inventory inventory) {

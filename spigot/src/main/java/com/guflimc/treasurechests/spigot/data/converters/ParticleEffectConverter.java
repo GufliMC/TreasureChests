@@ -2,8 +2,8 @@ package com.guflimc.treasurechests.spigot.data.converters;
 
 import com.guflimc.treasurechests.spigot.data.beans.ParticleEffect;
 
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 import java.util.regex.Pattern;
 
 @Converter(autoApply = true)

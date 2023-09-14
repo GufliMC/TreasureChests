@@ -10,7 +10,11 @@ import com.guflimc.treasurechests.spigot.data.beans.BTreasureLoot;
 import com.guflimc.treasurechests.spigot.data.converters.InventoryConverter;
 import com.guflimc.treasurechests.spigot.data.converters.ItemStackConverter;
 import com.guflimc.treasurechests.spigot.data.converters.LocationConverter;
+import com.guflimc.treasurechests.spigot.data.converters.ParticleEffectConverter;
 import io.ebean.annotation.Platform;
+import io.ebean.config.DatabaseConfig;
+import io.ebean.config.UnderscoreNamingConvention;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -35,6 +39,7 @@ public class DatabaseContext extends EbeanDatabaseContext {
             LocationConverter.class,
             InventoryConverter.class,
             ComponentConverter.class,
+            ParticleEffectConverter.class,
 
             BTreasureChest.class,
             BTreasureLoot.class,
