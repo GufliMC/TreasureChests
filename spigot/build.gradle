@@ -19,7 +19,9 @@ dependencies {
 
     // gufli tools
     implementation 'com.guflimc.brick.gui:spigot-api:+'
-    implementation 'com.guflimc.brick.orm:ebean:+'
+    implementation('com.guflimc.brick.orm:ebean:+') {
+        exclude group: 'com.h2database'
+    }
     implementation('com.guflimc.brick.orm:jpa-converters:+') {
         exclude group: 'jakarta.persistence'
     }
@@ -33,6 +35,9 @@ dependencies {
 //    implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 //    implementation 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 //    implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
+
+
+    runtimeOnly 'com.h2database:h2:2.1.214'
 }
 
 bukkit {
