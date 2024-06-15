@@ -552,8 +552,7 @@ public class PlayerChestSetupListener implements Listener {
                     ItemStackBuilder b = ItemStackBuilder.of(type.material());
 
                     if (chest.particleEffect() != null && chest.particleEffect().type() == type) {
-                        b
-                                .withName(ChatColor.GREEN + type.display() + ChatColor.GRAY + " (Selected)")
+                        b.withName(ChatColor.GREEN + type.display() + ChatColor.GRAY + " (Selected)")
                                 .withEnchantment(Enchantment.SILK_TOUCH, 1)
                                 .withItemFlag(ItemFlag.HIDE_ENCHANTS)
                                 .build();
@@ -575,6 +574,17 @@ public class PlayerChestSetupListener implements Listener {
                         return true;
                     }));
                 })
+                .withHotbarItem(8, ItemStackBuilder.of(Material.GLASS_BOTTLE)
+                                .withName(ChatColor.GREEN + "No particles")
+                                .build(),
+                        SpigotMenu.soundWrapper((event) -> {
+                            chest.setParticleEffect(null);
+                            particleJobManager.stop(chest);
+                            manager.save(chest);
+                            particles(player, chest);
+                            return true;
+                        })
+                )
                 .build()
                 .open(player);
     }
