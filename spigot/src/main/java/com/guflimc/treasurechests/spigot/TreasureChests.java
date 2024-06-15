@@ -8,6 +8,7 @@ import com.guflimc.treasurechests.spigot.listeners.PlayerChestSetupListener;
 import com.guflimc.treasurechests.spigot.listeners.PlayerConnectionListener;
 import com.guflimc.treasurechests.spigot.listeners.WorldListener;
 import com.guflimc.treasurechests.spigot.particle.ParticleJobManager;
+import com.guflimc.treasurechests.spigot.placeholders.TreasureChestPlaceholders;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 

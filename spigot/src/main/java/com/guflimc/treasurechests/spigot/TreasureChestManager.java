@@ -107,7 +107,14 @@ public class TreasureChestManager {
         BTreasureChestInventory tci = chestInventoryBy(chest, player);
 
         if (tci != null) {
-            return Duration.of(chest.respawnTime(), ChronoUnit.SECONDS).minus(Duration.between(tci.createdAt(), Instant.now()));
+            Duration duration = Duration.of(chest.respawnTime(), ChronoUnit.SECONDS)
+                    .minus(Duration.between(tci.createdAt(), Instant.now()));
+
+            if ( duration.isNegative() ) {
+                return null;
+            }
+
+            return duration;
         }
 
         return Duration.ZERO;

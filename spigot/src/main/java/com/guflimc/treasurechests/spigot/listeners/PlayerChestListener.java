@@ -42,8 +42,14 @@ public class PlayerChestListener implements Listener {
 
         event.setCancelled(true);
         if ( inv.isEmpty() ) {
-            Duration dur = manager.respawnIn(block, player);
-            player.sendMessage(ChatColor.RED + "This chest has already been looted. It will refill in " + ChatColor.GOLD + DurationFormatter.COZY.format(dur) + ChatColor.RED + ".");
+            Duration duration = manager.respawnIn(block, player);
+            if ( duration == null ) {
+                player.sendMessage(ChatColor.RED + "This chest has already been looted.");
+                return;
+            }
+
+            String formatted = DurationFormatter.COMPACT.format(duration);
+            player.sendMessage(ChatColor.RED + "This chest has already been looted. It will refill in " + ChatColor.GOLD + formatted + ChatColor.RED + ".");
             return;
         }
 
