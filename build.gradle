@@ -9,6 +9,9 @@ version = scmVersion.version
 subprojects {
     apply plugin: 'java'
 
+    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_11
+
     repositories {
         mavenCentral()
         maven { url 'https://repo.jorisg.com/snapshots' }
@@ -24,6 +27,6 @@ apply from: 'https://guflimc.github.io/scripts/gradle/subprojects-default.gradle
 apply from: 'https://guflimc.github.io/scripts/gradle/subprojects-shadow.gradle'
 
 if ( System.getProperty("os.name").toLowerCase().contains("windows") ) {
-    ext.set("shadowCopy", [(project(':spigot')): 'D:/Minecraft/servers/1.20 - kdc/plugins'])
+    ext.set("shadowCopy", [(project(':spigot')): 'D:/Minecraft/servers/kdc/latest/plugins'])
     apply from: 'https://guflimc.github.io/scripts/gradle/subprojects-shadow-copy.gradle'
 }

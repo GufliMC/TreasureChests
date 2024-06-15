@@ -1,6 +1,7 @@
 package com.guflimc.treasurechests.spigot;
 
 import com.guflimc.brick.gui.spigot.SpigotBrickGUI;
+import com.guflimc.brick.placeholders.spigot.api.manager.SpigotPlaceholderManager;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.listeners.PlayerChestListener;
 import com.guflimc.treasurechests.spigot.listeners.PlayerChestSetupListener;
@@ -31,6 +32,10 @@ public class TreasureChests extends JavaPlugin {
 
         // particle
         particleJobManager = new ParticleJobManager(this, manager);
+
+        // placeholders
+        SpigotPlaceholderManager placeholderManager = new SpigotPlaceholderManager(this);
+        placeholderManager.register(new TreasureChestPlaceholders(manager));
 
         // init guis
         SpigotBrickGUI.register(this);

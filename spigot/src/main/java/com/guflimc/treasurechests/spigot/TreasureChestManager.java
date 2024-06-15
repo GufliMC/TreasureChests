@@ -3,7 +3,6 @@ package com.guflimc.treasurechests.spigot;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.data.beans.*;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,6 +15,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -85,18 +85,41 @@ public class TreasureChestManager {
         return material.name().contains("CHEST") || material.name().contains("SHULKER_BOX");
     }
 
+    private BTreasureChestInventory chestInventoryBy(BTreasureChest chest, Player player) {
+        return inventories.stream()
+                .filter(inv -> inv.chest().equals(chest))
+                .filter(inv -> inv.chest().mode() == ChestMode.SERVER_BOUND || inv.playerId().equals(player.getUniqueId()))
+                .filter(inv -> chest.respawnTime() <= 0 || inv.createdAt().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
+                .max(Comparator.comparing(BTreasureChestInventory::createdAt))
+                .orElse(null);
+    }
+
+    public Duration respawnIn(Block block, Player player) {
+        BTreasureChest chest = chestAt(block);
+        if (chest == null) {
+            return null;
+        }
+
+        return respawnIn(chest, player);
+    }
+
+    public Duration respawnIn(BTreasureChest chest, Player player) {
+        BTreasureChestInventory tci = chestInventoryBy(chest, player);
+
+        if (tci != null) {
+            return Duration.of(chest.respawnTime(), ChronoUnit.SECONDS).minus(Duration.between(tci.createdAt(), Instant.now()));
+        }
+
+        return Duration.ZERO;
+    }
+
     public Inventory inventoryFor(Block block, Player player) {
         BTreasureChest chest = chestAt(block);
         if (chest == null) {
             return null;
         }
 
-        BTreasureChestInventory tci = inventories.stream()
-                .filter(inv -> inv.chest().equals(chest))
-                .filter(inv -> inv.chest().mode() == ChestMode.SERVER_BOUND || inv.playerId().equals(player.getUniqueId()))
-                .filter(inv -> chest.respawnTime() <= 0 || inv.createdAt().isAfter(Instant.now().minus(chest.respawnTime(), ChronoUnit.SECONDS)))
-                .max(Comparator.comparing(BTreasureChestInventory::createdAt))
-                .orElse(null);
+        BTreasureChestInventory tci = chestInventoryBy(chest, player);
 
         // return inventory if it already exists
         if (tci != null) {

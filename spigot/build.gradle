@@ -19,6 +19,8 @@ dependencies {
 
     // gufli tools
     implementation 'com.guflimc.brick.gui:spigot-api:+'
+    implementation 'com.guflimc.brick.placeholders:spigot-api:+'
+    implementation 'com.guflimc.brick.i18n:spigot-api:+'
     implementation('com.guflimc.brick.orm:ebean:+') {
         exclude group: 'com.h2database'
     }
@@ -47,6 +49,7 @@ bukkit {
     author = 'GufliMC'
     website = 'https://github.com/GufliMC/TreasureChests'
     apiVersion = '1.16'
+    softDepend = ['PlaceholderAPI']
 
     permissions {
         'treasurechests.setup' {

@@ -1,6 +1,8 @@
 package com.guflimc.treasurechests.spigot.listeners;
 
+import com.guflimc.brick.i18n.api.time.DurationFormatter;
 import com.guflimc.treasurechests.spigot.TreasureChestManager;
+import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -10,6 +12,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+
+import java.time.Duration;
 
 public class PlayerChestListener implements Listener {
 
@@ -37,6 +41,12 @@ public class PlayerChestListener implements Listener {
         }
 
         event.setCancelled(true);
+        if ( inv.isEmpty() ) {
+            Duration dur = manager.respawnIn(block, player);
+            player.sendMessage(ChatColor.RED + "This chest has already been looted. It will refill in " + ChatColor.GOLD + DurationFormatter.COZY.format(dur) + ChatColor.RED + ".");
+            return;
+        }
+
         player.openInventory(inv);
     }
 

@@ -15,6 +15,7 @@ import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
@@ -301,6 +302,18 @@ public class PlayerChestSetupListener implements Listener {
             return true;
         });
 
+        // CHEST ID
+        Location loc = chest.location();
+        ItemStack info = ItemStackBuilder.of(Material.PAPER)
+                .withName(ChatColor.YELLOW + "Chest info")
+                .withLore(
+                        "",
+                        ChatColor.GRAY + "Id: " + ChatColor.GOLD + chest.id().toString(),
+                        ChatColor.GRAY + "Location: " + ChatColor.GOLD + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()
+                )
+                .build();
+        menu.setItem(49, info);
+
         menu.open(player);
     }
 
@@ -522,7 +535,7 @@ public class PlayerChestSetupListener implements Listener {
             seconds -= minutes * 60;
         }
 
-        if (seconds > 0 || str.length() == 0) {
+        if (seconds > 0 || str.isEmpty()) {
             str += seconds + "s";
         }
         return str;
