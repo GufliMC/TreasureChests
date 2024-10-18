@@ -33,16 +33,16 @@ public class ParticleJobManager {
         }
 
         AbstractParticleJob job = chest.particleEffect().pattern().creator()
-                .create(plugin, chest.location(), chest.particleEffect().type());
+                .create(plugin, chest.bukkitLocation(), chest.particleEffect().type());
         job.start();
         jobs.put(chest, job);
     }
 
     public void start(Chunk chunk) {
         manager.chests().stream()
-                .filter(chest -> chunk.getWorld().equals(chest.location().getWorld()))
-                .filter(chest -> chunk.getX() == chest.location().getBlockX() >> 4)
-                .filter(chest -> chunk.getZ() == chest.location().getBlockZ() >> 4)
+                .filter(chest -> chunk.getWorld().equals(chest.bukkitLocation().getWorld()))
+                .filter(chest -> chunk.getX() == chest.location().blockX() >> 4)
+                .filter(chest -> chunk.getZ() == chest.location().blockZ() >> 4)
                 .forEach(this::start);
     }
 
@@ -55,9 +55,9 @@ public class ParticleJobManager {
 
     public void stop(Chunk chunk) {
         new HashSet<>(jobs.keySet()).stream()
-                .filter(chest -> chunk.getWorld().equals(chest.location().getWorld()))
-                .filter(chest -> chunk.getX() == chest.location().getBlockX() >> 4)
-                .filter(chest -> chunk.getZ() == chest.location().getBlockZ() >> 4)
+                .filter(chest -> chunk.getWorld().equals(chest.bukkitLocation().getWorld()))
+                .filter(chest -> chunk.getX() == chest.location().blockX() >> 4)
+                .filter(chest -> chunk.getZ() == chest.location().blockZ() >> 4)
                 .forEach(this::stop);
     }
 }

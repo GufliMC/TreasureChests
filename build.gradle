@@ -1,6 +1,10 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2' apply false
-    id 'pl.allegro.tech.build.axion-release' version '1.13.6'
+    id 'pl.allegro.tech.build.axion-release' version '1.18.3'
+}
+
+scmVersion {
+    ignoreUncommittedChanges.set(false)
 }
 
 group 'com.guflimc.treasurechests'

@@ -1,11 +1,12 @@
 package com.guflimc.treasurechests.spigot.data.beans;
 
+import com.guflimc.brick.math.common.geometry.pos3.Location;
+import com.guflimc.brick.math.spigot.SpigotAdapter;
 import com.guflimc.brick.orm.jpa.converters.ComponentConverter;
 import com.guflimc.treasurechests.spigot.data.converters.LocationConverter;
 import com.guflimc.treasurechests.spigot.data.converters.ParticleEffectConverter;
 import io.ebean.annotation.DbDefault;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
 import jakarta.persistence.*;
@@ -59,6 +60,10 @@ public class BTreasureChest extends BModel {
 
     public Location location() {
         return location;
+    }
+
+    public org.bukkit.Location bukkitLocation() {
+        return SpigotAdapter.adapt(this.location);
     }
 
     public int respawnTime() {

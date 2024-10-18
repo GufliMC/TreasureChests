@@ -27,6 +27,7 @@ dependencies {
     implementation('com.guflimc.brick.orm:jpa-converters:+') {
         exclude group: 'jakarta.persistence'
     }
+    implementation 'com.guflimc.brick.math:spigot:+'
 
     // adventure
     implementation 'net.kyori:adventure-api:4.+'

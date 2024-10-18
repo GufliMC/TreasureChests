@@ -5,6 +5,7 @@ import com.guflimc.brick.gui.spigot.api.ISpigotMenu;
 import com.guflimc.brick.gui.spigot.item.ItemStackBuilder;
 import com.guflimc.brick.gui.spigot.menu.SpigotMenu;
 import com.guflimc.brick.gui.spigot.menu.SpigotMenuItem;
+import com.guflimc.brick.math.spigot.SpigotAdapter;
 import com.guflimc.treasurechests.spigot.TreasureChestManager;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureChest;
 import com.guflimc.treasurechests.spigot.data.beans.BTreasureLoot;
@@ -66,8 +67,8 @@ public class PlayerChestSetupListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
-        if (event.getBlock().getLocation().equals(chest.location())) {
+;
+        if (event.getBlock().getLocation().equals(chest.bukkitLocation()) ) {
             particleJobManager.stop(chest);
             manager.delete(chest);
         }
@@ -303,7 +304,7 @@ public class PlayerChestSetupListener implements Listener {
         });
 
         // CHEST ID
-        Location loc = chest.location();
+        Location loc = chest.bukkitLocation();
         ItemStack info = ItemStackBuilder.of(Material.PAPER)
                 .withName(ChatColor.YELLOW + "Chest info")
                 .withLore(
@@ -372,7 +373,7 @@ public class PlayerChestSetupListener implements Listener {
     private final ItemStack back = ItemStackBuilder.of(Material.PAPER).withName(ChatColor.GREEN + "Back").build();
 
     private void loot(Player player, BTreasureChest chest) {
-        int size = manager.isDoubleChest(chest.location()) ? 54 : 36;
+        int size = manager.isDoubleChest(chest.bukkitLocation()) ? 54 : 36;
 
         // remove excess loot
         if (chest.loot().size() > size) {

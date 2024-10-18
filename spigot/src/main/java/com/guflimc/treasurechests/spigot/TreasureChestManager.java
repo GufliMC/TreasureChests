@@ -1,5 +1,6 @@
 package com.guflimc.treasurechests.spigot;
 
+import com.guflimc.brick.math.spigot.SpigotAdapter;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.data.beans.*;
 import net.kyori.adventure.platform.bukkit.BukkitComponentSerializer;
@@ -269,15 +270,15 @@ public class TreasureChestManager {
     private BTreasureChest chestAt(Collection<Block> blocks) {
         return chests.stream()
                 .filter(c -> blocks.stream().anyMatch(b ->
-                        c.location().getWorld().getUID().equals(b.getWorld().getUID()) &&
-                                c.location().getBlockX() == b.getX() &&
-                                c.location().getBlockY() == b.getY() &&
-                                c.location().getBlockZ() == b.getZ()))
+                        b.getWorld().getUID().equals(c.location().worldId()) &&
+                                c.location().blockX() == b.getX() &&
+                                c.location().blockY() == b.getY() &&
+                                c.location().blockZ() == b.getZ()))
                 .findAny().orElse(null);
     }
 
     public CompletableFuture<BTreasureChest> addChest(Location location) {
-        BTreasureChest chest = new BTreasureChest(location);
+        BTreasureChest chest = new BTreasureChest(SpigotAdapter.adapt(location));
         return databaseContext.persistAsync(chest).thenCompose((v) -> {
             chests.add(chest);
             CompletableFuture<BTreasureChest> cf = new CompletableFuture<>();
