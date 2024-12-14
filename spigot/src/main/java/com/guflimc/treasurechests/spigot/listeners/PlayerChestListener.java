@@ -1,6 +1,7 @@
 package com.guflimc.treasurechests.spigot.listeners;
 
 import com.guflimc.brick.i18n.api.time.DurationFormatter;
+import com.guflimc.brick.i18n.spigot.api.SpigotTranslator;
 import com.guflimc.treasurechests.spigot.TreasureChestManager;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
@@ -18,9 +19,11 @@ import java.time.Duration;
 public class PlayerChestListener implements Listener {
 
     private final TreasureChestManager manager;
+    private final SpigotTranslator translator;
 
-    public PlayerChestListener(TreasureChestManager manager) {
+    public PlayerChestListener(TreasureChestManager manager, SpigotTranslator translator) {
         this.manager = manager;
+        this.translator = translator;
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
@@ -44,12 +47,12 @@ public class PlayerChestListener implements Listener {
         if ( inv.isEmpty() ) {
             Duration duration = manager.respawnIn(block, player);
             if ( duration == null ) {
-                player.sendMessage(ChatColor.RED + "This chest has already been looted.");
+                translator.send(player, "chest.looted");
                 return;
             }
 
             String formatted = DurationFormatter.COMPACT.format(duration);
-            player.sendMessage(ChatColor.RED + "This chest has already been looted. It will refill in " + ChatColor.GOLD + formatted + ChatColor.RED + ".");
+            translator.send(player, "chest.looted.duration", formatted);
             return;
         }
 

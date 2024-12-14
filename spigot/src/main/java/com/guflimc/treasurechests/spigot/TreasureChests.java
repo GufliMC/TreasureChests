@@ -1,6 +1,7 @@
 package com.guflimc.treasurechests.spigot;
 
 import com.guflimc.brick.gui.spigot.SpigotBrickGUI;
+import com.guflimc.brick.i18n.spigot.api.SpigotTranslator;
 import com.guflimc.brick.placeholders.spigot.api.manager.SpigotPlaceholderManager;
 import com.guflimc.treasurechests.spigot.data.DatabaseContext;
 import com.guflimc.treasurechests.spigot.listeners.PlayerChestListener;
@@ -12,18 +13,25 @@ import com.guflimc.treasurechests.spigot.placeholders.TreasureChestPlaceholders;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Locale;
+
 public class TreasureChests extends JavaPlugin {
 
     private DatabaseContext databaseContext;
     private TreasureChestManager manager;
     private ParticleJobManager particleJobManager;
 
+    private SpigotTranslator translator;
     //
 
     @Override
     public void onEnable() {
         // LOAD CONFIG
         TreasureChestsConfig config = new TreasureChestsConfig();
+
+        // translations
+        translator = new SpigotTranslator(this, Locale.ENGLISH);
+        translator.importTranslations(this);
 
         // INIT DATABASE
         databaseContext = new DatabaseContext(config.database);
@@ -44,7 +52,7 @@ public class TreasureChests extends JavaPlugin {
         // events
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerConnectionListener(manager), this);
-        pm.registerEvents(new PlayerChestListener(manager), this);
+        pm.registerEvents(new PlayerChestListener(manager, translator), this);
         pm.registerEvents(new PlayerChestSetupListener(manager, particleJobManager), this);
         pm.registerEvents(new WorldListener(particleJobManager), this);
 
