@@ -35,11 +35,11 @@ public class BTreasureChestInventory extends BModel {
 
     @WhenCreated
     @Column(name = "created_at")
-    Instant createdAt;
+    Instant createdAt = Instant.now();
 
     @WhenModified
     @Column(name = "updated_at")
-    Instant updatedAt;
+    Instant updatedAt = Instant.now();
 
     public BTreasureChestInventory(UUID playerId, BTreasureChest chest, Inventory inventory) {
         this.playerId = playerId;
