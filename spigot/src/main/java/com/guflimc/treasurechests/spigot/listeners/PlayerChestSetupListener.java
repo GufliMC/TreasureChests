@@ -160,7 +160,7 @@ public class PlayerChestSetupListener implements Listener {
                 .withName(ChatColor.YELLOW + "Inspect loot")
                 .withLore(
                         "",
-                        ChatColor.GRAY + "Left click to delete."
+                        ChatColor.GRAY + "Left click to change."
                 ).build();
         menu.setItem(11, inspect, (event) -> {
             loot(player, chest);
@@ -196,7 +196,7 @@ public class PlayerChestSetupListener implements Listener {
                 .withLore(
                         ChatColor.GRAY + "Mode: " + ChatColor.GOLD + chest.mode().name(),
                         "",
-                        ChatColor.GRAY + "Left click to cycle."
+                        ChatColor.GRAY + "Left click to change."
                 ).build();
         menu.setItem(15, mode, (event) -> {
             int ordinal = chest.mode().ordinal() + 1;
@@ -216,7 +216,7 @@ public class PlayerChestSetupListener implements Listener {
                 .withLore(
                         ChatColor.GRAY + "Value: " + (chest.splitStacks() ? ChatColor.GREEN + "enabled" : ChatColor.RED + "disabled"),
                         "",
-                        ChatColor.GRAY + "Left click to toggle."
+                        ChatColor.GRAY + "Left click to change."
                 ).build();
         menu.setItem(20, splitStacks, (event) -> {
             chest.setSplitStacks(!chest.splitStacks());
@@ -245,7 +245,7 @@ public class PlayerChestSetupListener implements Listener {
                 .withName(ChatColor.YELLOW + "Particle effects")
                 .withLore(
                         "",
-                        ChatColor.GRAY + "Left click to change particle effects.")
+                        ChatColor.GRAY + "Left click to change.")
                 .build();
         menu.setItem(24, particles, (event) -> {
             particles(player, chest);
