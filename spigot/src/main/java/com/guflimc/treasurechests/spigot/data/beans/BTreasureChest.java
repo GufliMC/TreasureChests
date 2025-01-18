@@ -24,7 +24,7 @@ public class BTreasureChest extends BModel {
     @Column(nullable = false)
     private final Location location;
 
-    @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(targetEntity = BTreasureLoot.class, mappedBy = "chest", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<BTreasureLoot> loot;
 
     @Column(name = "respawn_time", nullable = false)
