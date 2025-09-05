@@ -1,6 +1,7 @@
 package com.guflimc.treasurechests.spigot.placeholders;
 
 import com.guflimc.brick.i18n.api.time.DurationFormatter;
+import com.guflimc.brick.i18n.spigot.api.SpigotTranslator;
 import com.guflimc.brick.placeholders.api.module.PlaceholderModule;
 import com.guflimc.brick.placeholders.api.module.PlaceholderTreeModule;
 import com.guflimc.brick.placeholders.api.resolver.PlaceholderResolveContext;
@@ -15,10 +16,12 @@ import java.time.Duration;
 public class TreasureChestCountdownPlaceholders extends PlaceholderTreeModule<Player> implements PlaceholderModule<Player> {
 
     private final TreasureChestManager manager;
+    private final SpigotTranslator translator;
 
-    public TreasureChestCountdownPlaceholders(TreasureChestManager manager) {
+    public TreasureChestCountdownPlaceholders(TreasureChestManager manager, SpigotTranslator translator) {
         super("treasurechests");
         this.manager = manager;
+        this.translator = translator;
 
         register("digital", (idp, ctx) -> format(idp, ctx, DurationFormatter.DIGITAL));
         register("cozy", (idp, ctx) -> format(idp, ctx, DurationFormatter.COZY));
@@ -31,8 +34,8 @@ public class TreasureChestCountdownPlaceholders extends PlaceholderTreeModule<Pl
                 .map(chest -> manager.respawnIn(chest, placeholderResolveContext.entity()))
                 .orElse(null);
 
-        if ( duration == null ) {
-            return null;
+        if ( duration == null || duration.isZero()  ) {
+            return translator.translate(placeholderResolveContext.entity(), "chest.available");
         }
 
         return Component.text(formatter.format(duration));

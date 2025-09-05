@@ -44,7 +44,7 @@ public class TreasureChests extends JavaPlugin {
 
         // placeholders
         SpigotPlaceholderManager placeholderManager = new SpigotPlaceholderManager(this);
-        placeholderManager.register(new TreasureChestPlaceholders(manager));
+        placeholderManager.register(new TreasureChestPlaceholders(manager, translator));
 
         // init guis
         SpigotBrickGUI.register(this);

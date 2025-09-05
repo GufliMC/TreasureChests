@@ -1,4 +1,5 @@
 {
   "chest.looted": "<red>This chest has already been looted.",
-  "chest.looted.duration": "<red>This chest has already been looted. It will refill in <gold>{0}<red>."
+  "chest.looted.duration": "<red>This chest has already been looted. It will refill in <gold>{0}<red>.",
+  "chest.available": "<green>This chest is available."
 }
