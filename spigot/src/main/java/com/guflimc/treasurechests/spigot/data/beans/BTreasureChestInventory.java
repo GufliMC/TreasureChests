@@ -23,9 +23,8 @@ public class BTreasureChestInventory extends BModel {
     @Column(name = "player_id", nullable = false)
     private final UUID playerId;
 
-    @ManyToOne(targetEntity = BTreasureChest.class)
+    @ManyToOne(targetEntity = BTreasureChest.class, optional = false)
     @DbForeignKey(onDelete = ConstraintMode.CASCADE)
-    @Column(nullable = false)
     @JoinColumn(name = "chest_id")
     private final BTreasureChest chest;
 

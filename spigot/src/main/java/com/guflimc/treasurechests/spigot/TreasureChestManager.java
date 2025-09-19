@@ -59,7 +59,7 @@ public class TreasureChestManager {
     }
 
     public void unload(Player player) {
-        inventories.removeIf(inv -> inv.playerId().equals(player.getUniqueId()));
+        inventories.removeIf(inv -> inv.chest().mode() == ChestMode.PLAYER_BOUND && inv.playerId().equals(player.getUniqueId()));
     }
 
     public void save(Player player, Inventory inventory) {
@@ -161,7 +161,7 @@ public class TreasureChestManager {
         String title = ChatColor.translateAlternateColorCodes('&', BukkitComponentSerializer.legacy().serialize(chest.title()));
         Inventory inv = Bukkit.createInventory(null, size, title);
 
-        // fill chess with spread
+        // split stacks
         if (chest.splitStacks()) {
             spread(items, inv.getSize());
         }

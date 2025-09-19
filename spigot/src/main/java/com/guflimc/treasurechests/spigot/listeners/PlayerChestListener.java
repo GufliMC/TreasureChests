@@ -3,7 +3,6 @@ package com.guflimc.treasurechests.spigot.listeners;
 import com.guflimc.brick.i18n.api.time.DurationFormatter;
 import com.guflimc.brick.i18n.spigot.api.SpigotTranslator;
 import com.guflimc.treasurechests.spigot.TreasureChestManager;
-import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
