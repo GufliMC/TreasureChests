@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -353,7 +354,7 @@ public class PlayerChestSetupListener implements Listener {
                     chest.setSplitStacks(clip.splitStacks());
                     chest.setTitle(clip.title());
                     chest.setParticleEffect(clip.particleEffect());
-                    chest.loot().forEach(chest::removeLoot);
+                    List.copyOf(chest.loot()).forEach(chest::removeLoot);
                     clip.loot().forEach(l -> {
                         BTreasureLoot loot = chest.addLoot(l.item());
                         loot.setChance(l.chance());
