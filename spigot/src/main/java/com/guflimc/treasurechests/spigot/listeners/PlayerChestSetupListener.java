@@ -279,18 +279,17 @@ public class PlayerChestSetupListener implements Listener {
             });
         }
 
-//        // FORCE REFILL
-//        ItemStack refill = ItemStackBuilder.of(Material.COOKIE)
-//                .withName(ChatColor.GOLD + "Force Refill")
-//                .withLore(
-//                        "",
-//                        ChatColor.GRAY + "Left click to refill all inventories.")
-//                .build();
-//        menu.setItem(40, refill, (event) -> {
-//
-//            return true;
-//        });
-        // TODO
+        // FORCE REFILL
+        ItemStack refill = ItemStackBuilder.of(Material.COOKIE)
+                .withName(ChatColor.GOLD + "Force Refill")
+                .withLore(
+                        "",
+                        ChatColor.GRAY + "Left click to reset and refill inventories.")
+                .build();
+        menu.setItem(40, refill, (event) -> {
+            manager.refill(chest);
+            return true;
+        });
 
         // DELETE
         ItemStack delete = ItemStackBuilder.of(Material.LAVA_BUCKET)

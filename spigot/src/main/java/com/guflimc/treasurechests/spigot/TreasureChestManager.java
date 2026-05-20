@@ -76,8 +76,11 @@ public class TreasureChestManager {
     }
 
     public void refill(BTreasureChest chest) {
-        inventories.removeIf(inv -> inv.chest().equals(chest));
-
+        List<BTreasureChestInventory> inventories = this.inventories.stream()
+                .filter(inv -> inv.chest().equals(chest))
+                .toList();
+        inventories.forEach(this.inventories::remove);
+        this.delete(inventories.toArray(new BTreasureChestInventory[0]));
     }
 
     //
